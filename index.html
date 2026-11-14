@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LaboPoche — Le labo de sciences dans ta poche</title>
+<title>LaboPoche | Le labo de sciences dans ta poche</title>
 <meta name="description" content="LaboPoche : un laboratoire virtuel de physique-chimie pour les lycéens. Prédis, manipule une simulation, et un professeur IA t'aide à comprendre jusqu'au compte rendu de TP.">
 <meta name="theme-color" content="#F6F4EE">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="LaboPoche">
 <meta property="og:locale" content="fr_FR">
-<meta property="og:title" content="LaboPoche — Le labo de sciences dans ta poche">
+<meta property="og:title" content="LaboPoche | Le labo de sciences dans ta poche">
 <meta property="og:description" content="Fais de vraies expériences de physique-chimie sur ton téléphone, même sans laboratoire : loi d'Ohm, réfraction, cinétique chimique, avec un professeur IA.">
 <meta property="og:url" content="https://labopoche.vercel.app/">
 <meta property="og:image" content="https://labopoche.vercel.app/og-image.png">
@@ -221,7 +221,7 @@
   .etapes li.active { background: var(--orange-clair); color: var(--encre); font-weight: 600; }
   .etapes li.active::before { background: var(--orange); border-color: var(--orange); color: var(--encre); }
   .etapes li.faite { background: var(--vert-clair); color: var(--vert-fonce); }
-  .etapes li.faite::before { content: '✓'; background: var(--vert-fonce); border-color: var(--vert-fonce); color: #fff; }
+  .etapes li.faite::before { content: ''; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E"); background-size: 14px; background-position: center; background-repeat: no-repeat; background: var(--vert-fonce); border-color: var(--vert-fonce); color: #fff; }
 
   .chat { display: flex; flex-direction: column; gap: 10px; min-height: 120px; max-height: 340px; overflow-y: auto; padding: 2px 2px 8px; }
   .bulle { max-width: 92%; padding: 12px 14px; border-radius: 16px; font-size: 15px; line-height: 1.5; animation: apparait .2s ease-out; }
@@ -229,6 +229,7 @@
   .bulle.prof { align-self: flex-start; background: var(--vert-clair); border-bottom-left-radius: 6px; }
   .bulle.eleve { align-self: flex-end; background: var(--bleu-clair); border-bottom-right-radius: 6px; }
   .bulle.erreur { background: var(--orange-clair); }
+  .bulle .mini-btn .ico { width: 16px; height: 16px; }
   .bulle .mini-btn { display: inline-flex; align-items: center; gap: 4px; min-height: 44px; margin: 2px 0 -10px -6px; padding: 0 6px; border: 0; background: transparent; color: var(--vert-fonce); font-weight: 600; font-size: 13px; }
   .bulle.erreur .mini-btn { color: #A9500F; }
   @keyframes apparait { from { opacity: 0; transform: translateY(4px); } }
@@ -285,6 +286,25 @@
   body.mode-classe .table-defile { max-height: 30vh; }
   body.mode-classe .graphe-boite { height: min(50vh, 520px); }
 
+  /* ---------- Icônes ---------- */
+  .ico { width: 1.15em; height: 1.15em; flex: none; vertical-align: -.2em; }
+  .micro .ico { width: 26px; height: 26px; }
+  .btn-entete .ico { width: 20px; height: 20px; }
+  .btn-info .ico { width: 20px; height: 20px; }
+  .exp-icone .ico { width: 26px; height: 26px; }
+  .exp-ohm { background: var(--orange-clair); color: #A9500F; }
+  .exp-refraction { background: var(--bleu-clair); color: var(--bleu); }
+  .exp-cinetique { background: var(--vert-clair); color: var(--vert-fonce); }
+  .avatar .ico { width: 22px; height: 22px; color: var(--vert-fonce); }
+  .puces li { display: inline-flex; align-items: center; gap: 6px; }
+  .puces .ico { color: var(--vert-fonce); }
+  .mini-bulle .ico { color: var(--vert-fonce); }
+  .aller { display: inline-flex; align-items: center; gap: 6px; }
+  details.explication summary .ico { color: var(--orange); width: 22px; height: 22px; }
+  .titre-ico { display: flex; align-items: center; gap: 8px; }
+  .titre-ico .ico { color: var(--vert-fonce); }
+  .feuille-tete .ico { display: none; }
+
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
   }
@@ -320,6 +340,28 @@
     <line x1="19" y1="12.5" x2="29" y2="12.5" stroke="#1B1F2A" stroke-width="2.2" stroke-linecap="round"/>
     <path d="M32.5 13 L33.5 15.7 L36.2 16.7 L33.5 17.7 L32.5 20.4 L31.5 17.7 L28.8 16.7 L31.5 15.7 Z" fill="#E8792B"/>
   </symbol>
+  <!-- Icônes de l'interface -->
+  <symbol id="i-son" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a10 10 0 0 1 0 14"/></symbol>
+  <symbol id="i-muet" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="m22 9-6 6"/><path d="m16 9 6 6"/></symbol>
+  <symbol id="i-micro" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10v1a7 7 0 0 0 14 0v-1"/><path d="M12 18v4"/></symbol>
+  <symbol id="i-photo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></symbol>
+  <symbol id="i-eclair" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></symbol>
+  <symbol id="i-rayon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h20"/><path d="M12 3v18" stroke-dasharray="2 3"/><path d="M5 4l7 8"/><path d="M12 12l4 8"/></symbol>
+  <symbol id="i-chrono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2"/><path d="M10 2h4"/></symbol>
+  <symbol id="i-prof" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10 12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/><path d="M22 10v6"/></symbol>
+  <symbol id="i-ecran" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></symbol>
+  <symbol id="i-ampoule" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1V17h6v-.2c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/></symbol>
+  <symbol id="i-regle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.4 2.4 0 0 1 0-3.4l2.6-2.6a2.4 2.4 0 0 1 3.4 0z"/><path d="m14.5 12.5 2-2M11.5 9.5l2-2M8.5 6.5l2-2M17.5 15.5l2-2"/></symbol>
+  <symbol id="i-document" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h6"/></symbol>
+  <symbol id="i-imprimer" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></symbol>
+  <symbol id="i-recommencer" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></symbol>
+  <symbol id="i-stop" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor"/></symbol>
+  <symbol id="i-lecture" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4v16l13-8z" fill="currentColor"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></symbol>
+  <symbol id="i-aide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></symbol>
+  <symbol id="i-fermer" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+  <symbol id="i-fleche-gauche" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></symbol>
+  <symbol id="i-fleche-droite" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></symbol>
 </svg>
 
 <a class="lien-evitement" href="#contenu">Aller au contenu</a>
@@ -331,8 +373,8 @@
     <span class="slogan">Le labo de sciences dans ta poche</span>
   </a>
   <div class="actions-entete">
-    <button class="btn-entete" id="btnAide" onclick="lancerVisite(true)" aria-label="Aide : afficher la visite guidée">? <span>Aide</span></button>
-    <button class="btn-entete" id="btnVoix" onclick="basculerVoix()" aria-pressed="true" aria-label="Voix du professeur activée. Appuie pour la couper.">🔊</button>
+    <button class="btn-entete" id="btnAide" onclick="lancerVisite(true)" aria-label="Aide : afficher la visite guidée"><svg class="ico" aria-hidden="true"><use href="#i-aide"/></svg> <span>Aide</span></button>
+    <button class="btn-entete" id="btnVoix" onclick="basculerVoix()" aria-pressed="true" aria-label="Voix du professeur activée. Appuie pour la couper."><svg class="ico" aria-hidden="true"><use href="#i-son"/></svg></button>
   </div>
 </header>
 <div id="bandeauHorsLigne" class="bandeau cache" role="status">Tu es hors connexion : les simulations fonctionnent, mais le professeur IA a besoin d'internet.</div>
@@ -351,13 +393,13 @@
           <button class="btn btn-grand btn-contour" onclick="allerA('comment')">Comment ça marche ?</button>
         </div>
         <ul class="puces" aria-label="Expériences disponibles">
-          <li>⚡ Loi d'Ohm</li><li>🌈 Réfraction</li><li>⏱️ Cinétique chimique</li>
+          <li><svg class="ico" aria-hidden="true"><use href="#i-eclair"/></svg> Loi d'Ohm</li><li><svg class="ico" aria-hidden="true"><use href="#i-rayon"/></svg> Réfraction</li><li><svg class="ico" aria-hidden="true"><use href="#i-chrono"/></svg> Cinétique chimique</li>
         </ul>
       </div>
       <div class="hero-visuel" aria-hidden="true">
         <svg class="logo-grand"><use href="#logo"/></svg>
         <div class="mini mini-afficheur">I = 60,0 mA</div>
-        <div class="mini mini-bulle">👩🏾‍🏫 Avant de manipuler, fais une prédiction !</div>
+        <div class="mini mini-bulle"><svg class="ico" aria-hidden="true"><use href="#i-prof"/></svg> Avant de manipuler, fais une prédiction !</div>
       </div>
     </div>
 
@@ -385,22 +427,22 @@
       <p class="section-intro">Trois TP du programme de lycée, prêts à faire sur ton téléphone.</p>
       <div class="grille-exp" id="grilleExp">
         <button class="exp" onclick="ouvrirLabo('ohm')">
-          <span class="exp-haut"><span class="exp-icone" aria-hidden="true">⚡</span><span class="niveau">2nde – 1re</span></span>
+          <span class="exp-haut"><span class="exp-icone exp-ohm"><svg class="ico" aria-hidden="true"><use href="#i-eclair"/></svg></span><span class="niveau">2nde et 1re</span></span>
           <h3>Loi d'Ohm</h3>
           <p>Fais varier la tension et la résistance d'un circuit, et découvre comment change l'intensité du courant.</p>
-          <span class="aller">Commencer →</span>
+          <span class="aller">Commencer <svg class="ico" aria-hidden="true"><use href="#i-fleche-droite"/></svg></span>
         </button>
         <button class="exp" onclick="ouvrirLabo('refraction')">
-          <span class="exp-haut"><span class="exp-icone" aria-hidden="true">🌈</span><span class="niveau">2nde – 1re</span></span>
+          <span class="exp-haut"><span class="exp-icone exp-refraction"><svg class="ico" aria-hidden="true"><use href="#i-rayon"/></svg></span><span class="niveau">2nde et 1re</span></span>
           <h3>Réfraction de la lumière</h3>
           <p>Envoie un rayon de lumière de l'air vers l'eau ou le verre, et observe comment il change de direction.</p>
-          <span class="aller">Commencer →</span>
+          <span class="aller">Commencer <svg class="ico" aria-hidden="true"><use href="#i-fleche-droite"/></svg></span>
         </button>
         <button class="exp" onclick="ouvrirLabo('cinetique')">
-          <span class="exp-haut"><span class="exp-icone" aria-hidden="true">⏱️</span><span class="niveau">Terminale</span></span>
+          <span class="exp-haut"><span class="exp-icone exp-cinetique"><svg class="ico" aria-hidden="true"><use href="#i-chrono"/></svg></span><span class="niveau">Terminale</span></span>
           <h3>Cinétique chimique</h3>
           <p>Suis l'hydrolyse du chlorure de tertiobutyle et découvre l'effet de la température sur la vitesse d'une réaction.</p>
-          <span class="aller">Commencer →</span>
+          <span class="aller">Commencer <svg class="ico" aria-hidden="true"><use href="#i-fleche-droite"/></svg></span>
         </button>
       </div>
 
@@ -408,13 +450,13 @@
         <h3>Ou demande au professeur</h3>
         <p class="aide">Écris, dicte ou prends en photo ta leçon : le professeur IA choisit l'expérience qui correspond.</p>
         <div class="saisie">
-          <button class="micro" id="microAccueil" aria-label="Dicter ta demande">🎤</button>
+          <button class="micro" id="microAccueil" aria-label="Dicter ta demande"><svg class="ico" aria-hidden="true"><use href="#i-micro"/></svg></button>
           <input type="text" id="texteAccueil" placeholder="Ex : je veux faire le TP sur la loi d'Ohm" aria-label="Ta demande au professeur" enterkeyhint="go" autocomplete="off">
         </div>
         <p class="statut-micro" id="statutMicroAccueil" aria-live="polite"></p>
         <div class="ligne-actions">
           <button class="btn" id="btnComprendre" onclick="comprendre()">Lancer le TP</button>
-          <label class="btn btn-secondaire btn-photo">📷 Photo de ma leçon
+          <label class="btn btn-secondaire btn-photo"><svg class="ico" aria-hidden="true"><use href="#i-photo"/></svg> Photo de ma leçon
             <input type="file" accept="image/*" capture="environment" id="photoLecon" class="sr-only">
           </label>
           <span id="infoPhoto" class="note"></span>
@@ -450,14 +492,14 @@
   <!-- ===================== ÉCRAN EXPÉRIENCE ===================== -->
   <section id="ecranLabo" class="cache">
     <div class="barre-labo">
-      <button class="btn btn-contour" onclick="allerAccueil()">← Accueil</button>
-      <button class="btn btn-contour" id="btnClasse" onclick="basculerModeClasse()">📺 Mode classe</button>
+      <button class="btn btn-contour" onclick="allerAccueil()"><svg class="ico" aria-hidden="true"><use href="#i-fleche-gauche"/></svg> Accueil</button>
+      <button class="btn btn-contour" id="btnClasse" onclick="basculerModeClasse()"><svg class="ico" aria-hidden="true"><use href="#i-ecran"/></svg> Mode classe</button>
     </div>
     <h2 id="titreTP" class="titre-tp"></h2>
     <p id="objectifTP" class="doux"></p>
 
     <details class="carte explication" id="explication">
-      <summary>💡 C'est quoi cette expérience ?</summary>
+      <summary><svg class="ico" aria-hidden="true"><use href="#i-ampoule"/></svg> C'est quoi cette expérience ?</summary>
       <div class="explication-corps" id="texteExplication"></div>
     </details>
 
@@ -472,7 +514,7 @@
         <div class="carte-tete">
           <h3>Mes mesures</h3>
           <div class="ligne-actions" style="margin: 0;">
-            <button class="btn" id="btnMesurer" onclick="mesurer()">📏 Mesurer</button>
+            <button class="btn" id="btnMesurer" onclick="mesurer()"><svg class="ico" aria-hidden="true"><use href="#i-regle"/></svg> Mesurer</button>
             <button class="btn btn-contour" onclick="viderMesures()">Effacer</button>
           </div>
         </div>
@@ -487,7 +529,7 @@
 
       <div class="carte" id="carteProf">
         <div class="prof-titre">
-          <span class="avatar" id="avatarProf" aria-hidden="true">👩🏾‍🏫</span>
+          <span class="avatar" id="avatarProf" aria-hidden="true"><svg class="ico" aria-hidden="true"><use href="#i-prof"/></svg></span>
           <h3 style="margin:0; font-size:18px;">Ton professeur de TP<span class="etat-prof" id="etatProf" aria-live="polite"></span></h3>
         </div>
         <ol class="etapes" id="etapes" aria-label="Étapes du TP" style="margin-top:12px;">
@@ -495,11 +537,11 @@
         </ol>
         <div class="chat" id="chat" aria-live="polite"></div>
         <div class="barre-voix">
-          <button class="btn-lien" id="btnReecouterQ" onclick="reecouterQuestion()" disabled>🔊 Réécouter la question</button>
-          <button class="btn-stop cache" id="btnStop" onclick="arreterVoix()">⏹ Arrêter</button>
+          <button class="btn-lien" id="btnReecouterQ" onclick="reecouterQuestion()" disabled><svg class="ico" aria-hidden="true"><use href="#i-son"/></svg> Réécouter la question</button>
+          <button class="btn-stop cache" id="btnStop" onclick="arreterVoix()"><svg class="ico" aria-hidden="true"><use href="#i-stop"/></svg> Arrêter</button>
         </div>
         <div class="saisie">
-          <button class="micro" id="microProf" aria-label="Dicter ta réponse">🎤</button>
+          <button class="micro" id="microProf" aria-label="Dicter ta réponse"><svg class="ico" aria-hidden="true"><use href="#i-micro"/></svg></button>
           <input type="text" id="texteProf" placeholder="Ta prédiction ou ta question…" aria-label="Ta prédiction ou ta question" enterkeyhint="send" autocomplete="off">
         </div>
         <p class="statut-micro" id="statutMicroProf" aria-live="polite"></p>
@@ -507,22 +549,22 @@
       </div>
 
       <div class="carte" id="carteRapport">
-        <div class="carte-tete"><h3>📝 Mon compte rendu</h3></div>
+        <div class="carte-tete"><h3 class="titre-ico"><svg class="ico" aria-hidden="true"><use href="#i-document"/></svg> Mon compte rendu</h3></div>
         <p class="aide" id="aideRapport"></p>
         <button class="btn btn-orange btn-plein" id="btnRapport" onclick="genererRapport()">Générer mon compte rendu de TP</button>
         <div id="rapport"></div>
       </div>
     </div>
-    <button class="btn quitter-classe" onclick="basculerModeClasse()">✕ Quitter le mode classe</button>
+    <button class="btn quitter-classe" onclick="basculerModeClasse()"><svg class="ico" aria-hidden="true"><use href="#i-fermer"/></svg> Quitter le mode classe</button>
   </section>
 </main>
 
 <footer class="pied">
   <div class="pied-int">
-    <div class="pied-marque"><svg class="logo" aria-hidden="true"><use href="#logo"/></svg> LaboPoche — par l'équipe GENESIS</div>
+    <div class="pied-marque"><svg class="logo" aria-hidden="true"><use href="#logo"/></svg> LaboPoche, par l'équipe GENESIS</div>
     <!-- À REMPLIR : noms de l'équipe et e-mail de contact -->
     <p>Équipe : [à remplir : Prénom NOM], [à remplir], [à remplir], [à remplir]</p>
-    <p>Projet réalisé pour le Hackathon Create With AI — Lomé 2026</p>
+    <p>Projet réalisé pour le Hackathon Create With AI, Lomé 2026</p>
     <p>Propulsé par Google Gemini · Développé avec l'aide de Claude</p>
     <p>Les simulations sont des modèles pédagogiques simplifiés. Aucune donnée personnelle n'est collectée.</p>
     <p>Contact : [à remplir : e-mail de l'équipe]</p>
@@ -573,7 +615,7 @@ function allerA(id) { $(id).scrollIntoView({ behavior: mouvementReduit() ? 'auto
 /* =========================================================
    2. DÉFINITION DES EXPÉRIENCES
    Chaque expérience décrit : ses textes d'explication, ses curseurs
-   (avec une aide ⓘ), son calcul physique, son tableau et son graphique.
+   (avec une aide « i »), son calcul physique, son tableau et son graphique.
    ========================================================= */
 const NOMS_MILIEUX = { air: 'Air', eau: 'Eau', verre: 'Verre' };
 const libelleMilieux = m => m.split('-').map(x => NOMS_MILIEUX[x]).join(' → ');
@@ -641,7 +683,7 @@ const EXPERIENCES = {
     objectif: "Voir comment la température influence la vitesse d'une réaction, en suivant la conductivité (modèle simplifié).",
     question: "Si on chauffe la solution de 20 °C à 30 °C, la réaction ira-t-elle plus vite, moins vite ou à la même vitesse ? Pourquoi ?",
     explication: [
-      "Le chlorure de tertiobutyle réagit avec l'eau (en TP, dans un mélange eau-acétone) : (CH3)3C–Cl + 2 H2O → (CH3)3C–OH + H3O+ + Cl−.",
+      "Le chlorure de tertiobutyle réagit avec l'eau (en TP, dans un mélange eau-acétone) : (CH3)3C-Cl + 2 H2O → (CH3)3C-OH + H3O+ + Cl−.",
       "Cette réaction produit des ions, donc la conductivité σ de la solution augmente au fur et à mesure que la réaction avance. En suivant σ au cours du temps, on suit l'avancement de la réaction.",
       "Le temps de demi-réaction t½ est la durée au bout de laquelle l'avancement atteint la moitié de sa valeur finale.",
       "C'est un modèle simplifié : ici, la vitesse double environ quand la température augmente de 10 °C, et σ est donnée en unités arbitraires (u.a.)."
@@ -686,7 +728,7 @@ function afficherAccueil() {
   if (document.body.classList.contains('mode-classe')) basculerModeClasse();
   $('ecranLabo').classList.add('cache');
   $('ecranAccueil').classList.remove('cache');
-  document.title = 'LaboPoche — Le labo de sciences dans ta poche';
+  document.title = 'LaboPoche | Le labo de sciences dans ta poche';
   window.scrollTo(0, 0);
 }
 
@@ -704,7 +746,7 @@ function ouvrirLabo(id, infosIA, depuisHistorique) {
 
   $('titreTP').textContent = texteIA('titre') || e.titre;
   $('objectifTP').textContent = texteIA('objectif') || e.objectif;
-  document.title = e.titre + ' — LaboPoche';
+  document.title = e.titre + ' | LaboPoche';
   const corps = $('texteExplication');
   corps.innerHTML = '';
   e.explication.forEach(t => { const p = document.createElement('p'); p.textContent = t; corps.appendChild(p); });
@@ -787,7 +829,7 @@ function construireSimulation() {
       <div class="curseur-tete">
         <label for="cur_${id}">${nom}</label>
         <span class="valeur" id="val_${id}"></span>
-        <button class="btn-info" type="button" aria-label="Explication : ${nom}" aria-expanded="false" aria-controls="info_${id}" onclick="basculerInfo('${id}', this)">ⓘ</button>
+        <button class="btn-info" type="button" aria-label="Explication : ${nom}" aria-expanded="false" aria-controls="info_${id}" onclick="basculerInfo('${id}', this)"><svg class="ico" aria-hidden="true"><use href="#i-info"/></svg></button>
       </div>
       <p class="info-curseur cache" id="info_${id}">${aide}</p>
       ${controle}
@@ -800,7 +842,7 @@ function construireSimulation() {
     html += bloc(c.id, c.nom, c.aide, `<input type="range" id="cur_${c.id}" min="${c.min}" max="${c.max}" step="${c.pas}" value="${c.val}">`);
   });
   if (expCourante === 'cinetique') {
-    html += '<div class="actions-sim"><button class="btn btn-secondaire" id="btnReaction" onclick="lancerReaction()">▶️ Lancer la réaction (accéléré)</button>' +
+    html += '<div class="actions-sim"><button class="btn btn-secondaire" id="btnReaction" onclick="lancerReaction()"><svg class="ico" aria-hidden="true"><use href="#i-lecture"/></svg> Lancer la réaction (accéléré)</button>' +
             '<span class="note">Une mesure est prise toutes les 10 minutes.</span></div>';
   }
   zone.innerHTML = html;
@@ -962,7 +1004,7 @@ function lancerReaction() {
   if (animCinetique) { arreterAnimation(); return; }
   valeurs.t = 0; $('cur_t').value = 0; dessiner();
   mesurer(true);
-  $('btnReaction').textContent = '⏹ Arrêter la réaction';
+  $('btnReaction').innerHTML = '<svg class="ico" aria-hidden="true"><use href="#i-stop"/></svg> Arrêter la réaction';
   animCinetique = setInterval(() => {
     valeurs.t += 1;
     $('cur_t').value = valeurs.t;
@@ -973,7 +1015,7 @@ function lancerReaction() {
 }
 function arreterAnimation() {
   if (animCinetique) { clearInterval(animCinetique); animCinetique = null; }
-  const b = $('btnReaction'); if (b) b.textContent = '▶️ Lancer la réaction (accéléré)';
+  const b = $('btnReaction'); if (b) b.innerHTML = '<svg class="ico" aria-hidden="true"><use href="#i-lecture"/></svg> Lancer la réaction (accéléré)';
 }
 
 /* =========================================================
@@ -1155,7 +1197,7 @@ async function envoyerAuProf(texte, contexte) {
     attente.remove();
     const b = ajouterBulle('prof', messageErreur(e.message) + ' En attendant, continue à manipuler et à noter tes mesures.', { erreur: true });
     const bouton = document.createElement('button');
-    bouton.className = 'mini-btn'; bouton.type = 'button'; bouton.textContent = '↻ Réessayer';
+    bouton.className = 'mini-btn'; bouton.type = 'button'; bouton.innerHTML = '<svg class="ico" aria-hidden="true"><use href="#i-recommencer"/></svg> Réessayer';
     bouton.onclick = () => { if (profOccupe) return; b.remove(); envoyerAuProf(texte, contexte); };
     b.appendChild(bouton);
   } finally { profOccupe = false; $('btnProf').disabled = false; }
@@ -1181,13 +1223,13 @@ async function genererRapport() {
     if (jeton !== jetonTP) return;
     zone.innerHTML = feuilleRapport(rep) +
       '<div class="ligne-actions no-print">' +
-      '<button class="btn" onclick="window.print()">🖨️ Imprimer / PDF</button>' +
-      '<button class="btn btn-contour" onclick="genererRapport()">↻ Régénérer</button></div>';
+      '<button class="btn" onclick="window.print()"><svg class="ico" aria-hidden="true"><use href="#i-imprimer"/></svg> Imprimer / PDF</button>' +
+      '<button class="btn btn-contour" onclick="genererRapport()"><svg class="ico" aria-hidden="true"><use href="#i-recommencer"/></svg> Régénérer</button></div>';
     zone.scrollIntoView({ behavior: mouvementReduit() ? 'auto' : 'smooth', block: 'start' });
   } catch (err) {
     if (jeton !== jetonTP) return;
     zone.innerHTML = `<p class="alerte">${messageErreur(err.message)}</p>` +
-      '<div class="ligne-actions"><button class="btn btn-contour" onclick="genererRapport()">↻ Réessayer</button></div>';
+      '<div class="ligne-actions"><button class="btn btn-contour" onclick="genererRapport()"><svg class="ico" aria-hidden="true"><use href="#i-recommencer"/></svg> Réessayer</button></div>';
   } finally { rapportOccupe = false; $('btnRapport').disabled = false; }
 }
 
@@ -1249,7 +1291,7 @@ function basculerVoix() {
 }
 function majBoutonVoix() {
   const b = $('btnVoix');
-  b.textContent = voixActive ? '🔊' : '🔇';
+  b.innerHTML = voixActive ? '<svg class="ico" aria-hidden="true"><use href="#i-son"/></svg>' : '<svg class="ico" aria-hidden="true"><use href="#i-muet"/></svg>';
   b.setAttribute('aria-pressed', String(voixActive));
   b.setAttribute('aria-label', voixActive ? 'Voix du professeur activée. Appuie pour la couper.' : 'Voix du professeur coupée. Appuie pour la remettre.');
   b.title = voixActive ? 'Couper la voix du professeur' : 'Remettre la voix du professeur';
@@ -1259,7 +1301,7 @@ function majBoutonVoix() {
 function brancherMicro(idBouton, idChamp, idStatut, apres) {
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   const bouton = $(idBouton), statut = $(idStatut), champ = $(idChamp);
-  const PRET = 'Touche 🎤 pour parler, ou écris ta réponse.';
+  const PRET = 'Touche le micro pour parler, ou écris ta réponse.';
   if (!SR) {
     bouton.classList.add('indispo');
     bouton.setAttribute('aria-disabled', 'true');
@@ -1276,7 +1318,7 @@ function brancherMicro(idBouton, idChamp, idStatut, apres) {
     rec = new SR(); rec.lang = 'fr-FR'; rec.interimResults = false; rec.maxAlternatives = 1;
     let compris = false, erreur = '';
     bouton.classList.add('ecoute'); bouton.setAttribute('aria-label', "Arrêter l'écoute");
-    statut.textContent = "🔴 J'écoute… parle maintenant.";
+    statut.textContent = "J'écoute… parle maintenant.";
     rec.onresult = ev => { compris = true; champ.value = ev.results[0][0].transcript; };
     rec.onerror = ev => { erreur = ev.error; };
     rec.onend = () => {
@@ -1285,7 +1327,7 @@ function brancherMicro(idBouton, idChamp, idStatut, apres) {
       if (compris) { statut.textContent = PRET; if (apres) apres(); return; }
       statut.textContent =
         erreur === 'not-allowed' || erreur === 'service-not-allowed' ? "Autorise l'accès au micro dans ton navigateur, ou écris ta réponse." :
-        erreur === 'no-speech' ? "Je ne t'ai pas entendu. Touche 🎤 et réessaie, ou écris ta réponse." :
+        erreur === 'no-speech' ? "Je ne t'ai pas entendu. Touche le micro et réessaie, ou écris ta réponse." :
         erreur === 'network' ? "La dictée a besoin d'internet. Écris ta réponse dans le champ." : PRET;
     };
     try { rec.start(); } catch (e) { console.error(e); rec = null; bouton.classList.remove('ecoute'); statut.textContent = PRET; }
@@ -1298,7 +1340,7 @@ function brancherMicro(idBouton, idChamp, idStatut, apres) {
 const CLE_VISITE = 'labopoche_visite_vue';
 const VISITES = {
   labo: [
-    { cible: '#carteSim', titre: 'La simulation', texte: "Bouge les curseurs pour changer les réglages : le dessin et l'afficheur se mettent à jour tout de suite. Touche ⓘ pour savoir à quoi sert chaque réglage." },
+    { cible: '#carteSim', titre: 'La simulation', texte: "Bouge les curseurs pour changer les réglages : le dessin et l'afficheur se mettent à jour tout de suite. Touche le bouton « i » pour savoir à quoi sert chaque réglage." },
     { cible: '#btnMesurer', titre: 'Le bouton Mesurer', texte: "Quand ton réglage est prêt, appuie sur « Mesurer » : la mesure s'ajoute au tableau et au graphique. Fais-en au moins 3." },
     { cible: '#carteProf', titre: 'Ton professeur', texte: "Commence par écrire ou dicter ta prédiction. Le professeur te guide sans te donner la réponse. À la fin, génère ton compte rendu." }
   ],
@@ -1359,7 +1401,7 @@ function ajouterBulle(qui, texte, options) {
     $('btnReecouterQ').disabled = false;
     if (syntheseOk) {
       const b = document.createElement('button');
-      b.type = 'button'; b.className = 'mini-btn'; b.textContent = '🔊 Réécouter';
+      b.type = 'button'; b.className = 'mini-btn'; b.innerHTML = '<svg class="ico" aria-hidden="true"><use href="#i-son"/></svg> Réécouter';
       b.setAttribute('aria-label', 'Réécouter ce message du professeur');
       b.onclick = () => parler(texte, true);
       d.appendChild(b);
@@ -1395,7 +1437,7 @@ $('photoLecon').addEventListener('change', ev => {
     c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
     photoBase64 = c.toDataURL('image/jpeg', 0.8).split(',')[1];
     URL.revokeObjectURL(url);
-    $('infoPhoto').textContent = '✅ Photo prête';
+    $('infoPhoto').textContent = 'Photo prête';
     comprendre();
   };
   img.onerror = () => {
