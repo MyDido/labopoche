@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LaboPoche — le labo de sciences dans ta poche</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --fond: #f6f4ee; --carte: #ffffff; --encre: #1b1f2a; --doux: #5b6272;
+    --vert: #0f8a5f; --vert-clair: #e3f4ec; --orange: #e8792b; --bleu: #2563c9;
+    --bord: #e2ded3; --rayon: 16px;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background: var(--fond); color: var(--encre); }
+  header { background: var(--encre); color: #fff; padding: 14px 18px; display: flex; align-items: center; gap: 10px; }
+  header h1 { margin: 0; font-size: 20px; cursor: pointer; }
+  header .tag { font-size: 12px; opacity: .7; }
+  header button { margin-left: auto; background: transparent; color: #fff; border: 1px solid #fff5; border-radius: 10px; padding: 6px 10px; font-size: 13px; }
+  main { max-width: 980px; margin: 0 auto; padding: 16px; }
+  .carte { background: var(--carte); border: 1px solid var(--bord); border-radius: var(--rayon); padding: 16px; margin-bottom: 14px; }
+  h2 { margin: 0 0 8px; font-size: 20px; }
+  p.doux { color: var(--doux); margin: 4px 0 12px; }
+  button { font: inherit; cursor: pointer; }
+  .btn { background: var(--vert); color: #fff; border: 0; border-radius: 12px; padding: 12px 16px; font-weight: 600; }
+  .btn.secondaire { background: var(--vert-clair); color: var(--vert); }
+  .btn.orange { background: var(--orange); }
+  .btn:disabled { opacity: .5; cursor: wait; }
+  .rangee { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  input[type=text], textarea, select { font: inherit; padding: 12px; border: 1px solid var(--bord); border-radius: 12px; width: 100%; background: #fff; }
+  .micro { width: 64px; height: 64px; border-radius: 50%; border: 0; background: var(--orange); color: #fff; font-size: 28px; flex: none; }
+  .micro.ecoute { animation: pulse 1s infinite; }
+  @keyframes pulse { 50% { box-shadow: 0 0 0 12px #e8792b33; } }
+  .grille3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+  .exp { text-align: left; background: var(--carte); border: 1px solid var(--bord); border-radius: var(--rayon); padding: 14px; }
+  .exp b { display: block; font-size: 16px; margin-bottom: 4px; }
+  .exp span { color: var(--doux); font-size: 14px; }
+  .cache { display: none !important; }
+  .labo { display: grid; grid-template-columns: 1.3fr 1fr; gap: 14px; }
+  @media (max-width: 800px) { .labo { grid-template-columns: 1fr; } }
+  canvas.sim, svg.sim { width: 100%; background: #fbfaf6; border-radius: 12px; border: 1px solid var(--bord); }
+  .curseur { margin: 12px 0; }
+  .curseur label { display: flex; justify-content: space-between; font-weight: 600; font-size: 15px; }
+  .curseur input { width: 100%; accent-color: var(--vert); }
+  .afficheur { font-family: ui-monospace, monospace; font-size: 22px; background: var(--encre); color: #7CFFB2; padding: 8px 12px; border-radius: 10px; display: inline-block; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { border-bottom: 1px solid var(--bord); padding: 6px; text-align: center; }
+  .chat { max-height: 320px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
+  .bulle { padding: 10px 12px; border-radius: 14px; max-width: 92%; line-height: 1.4; font-size: 15px; }
+  .bulle.prof { background: var(--vert-clair); align-self: flex-start; }
+  .bulle.eleve { background: #e8eefc; align-self: flex-end; }
+  .badge { display: inline-block; font-size: 12px; background: #fff3e6; color: var(--orange); padding: 3px 8px; border-radius: 99px; font-weight: 600; }
+  .rapport { line-height: 1.55; }
+  .rapport table { margin: 8px 0; }
+  .note { font-size: 12px; color: var(--doux); }
+  .chargement { color: var(--doux); font-style: italic; }
+</style>
+</head>
+<body>
+<header>
+  <h1 onclick="allerAccueil()">🔬 LaboPoche</h1>
+  <span class="tag">Le labo de sciences dans ta poche</span>
+  <button id="btnVoix" onclick="basculerVoix()">🔊 Voix : oui</button>
+</header>
+
+<main>
+  <!-- ===================== ÉCRAN ACCUEIL ===================== -->
+  <section id="ecranAccueil">
+    <div class="carte">
+      <h2>Quelle expérience veux-tu faire ?</h2>
+      <p class="doux">Parle, écris, ou prends en photo ta leçon. Le professeur IA prépare le TP pour toi.</p>
+      <div class="rangee" style="flex-wrap: nowrap;">
+        <button class="micro" id="microAccueil" title="Parler">🎤</button>
+        <input type="text" id="texteAccueil" placeholder="Ex : je veux faire le TP sur la loi d'Ohm">
+      </div>
+      <div class="rangee" style="margin-top: 10px;">
+        <button class="btn" id="btnComprendre" onclick="comprendre()">Lancer le TP</button>
+        <label class="btn secondaire">📷 Photo de ma leçon
+          <input type="file" accept="image/*" capture="environment" id="photoLecon" class="cache">
+        </label>
+        <span id="infoPhoto" class="note"></span>
+      </div>
+      <p id="msgAccueil" class="chargement"></p>
+    </div>
+
+    <div class="carte">
+      <h2>Ou choisis directement</h2>
+      <div class="grille3">
+        <button class="exp" onclick="ouvrirLabo('ohm')"><b>⚡ Loi d'Ohm</b><span>Tension, intensité et résistance dans un circuit.</span></button>
+        <button class="exp" onclick="ouvrirLabo('refraction')"><b>🌈 Réfraction</b><span>La lumière qui change de direction entre deux milieux.</span></button>
+        <button class="exp" onclick="ouvrirLabo('cinetique')"><b>⏱️ Cinétique chimique</b><span>Hydrolyse du chlorure de tertiobutyle : vitesse et température.</span></button>
+      </div>
+    </div>
+    <p class="note">Aucune donnée personnelle n'est demandée. Les simulations sont des modèles pédagogiques.</p>
+  </section>
+
+  <!-- ===================== ÉCRAN LABO ===================== -->
+  <section id="ecranLabo" class="cache">
+    <div class="rangee" style="margin-bottom: 10px;">
+      <button class="btn secondaire" onclick="allerAccueil()">← Accueil</button>
+      <h2 id="titreTP" style="margin: 0;"></h2>
+    </div>
+    <p id="objectifTP" class="doux"></p>
+
+    <div class="labo">
+      <div>
+        <div class="carte" id="zoneSim"></div>
+        <div class="carte">
+          <div class="rangee" style="justify-content: space-between;">
+            <b>Mes mesures</b>
+            <div class="rangee">
+              <button class="btn" onclick="mesurer()">📏 Mesurer</button>
+              <button class="btn secondaire" onclick="viderMesures()">Effacer</button>
+            </div>
+          </div>
+          <table id="tableMesures"></table>
+          <canvas id="graphe" height="200" style="margin-top: 10px;"></canvas>
+        </div>
+      </div>
+
+      <div>
+        <div class="carte">
+          <div class="rangee" style="justify-content: space-between;">
+            <b>👩🏾‍🏫 Ton professeur de TP</b>
+            <span class="badge" id="etapeBadge">Étape 1 : prédiction</span>
+          </div>
+          <div class="chat" id="chat"></div>
+          <div class="rangee" style="flex-wrap: nowrap;">
+            <button class="micro" id="microProf" style="width: 48px; height: 48px; font-size: 20px;">🎤</button>
+            <input type="text" id="texteProf" placeholder="Ta prédiction ou ta question…">
+          </div>
+          <button class="btn" style="margin-top: 8px; width: 100%;" id="btnProf" onclick="parlerAuProf()">Envoyer</button>
+        </div>
+        <div class="carte">
+          <button class="btn orange" style="width: 100%;" id="btnRapport" onclick="genererRapport()">📝 Générer mon compte rendu de TP</button>
+          <div id="rapport" class="rapport"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+/* =========================================================
+   1. ÉTAT GLOBAL
+   ========================================================= */
+let expCourante = null;          // 'ohm' | 'refraction' | 'cinetique'
+let valeurs = {};                // valeurs des curseurs
+let mesures = [];                // tableau des mesures
+let predictionFaite = false;
+let photoBase64 = null;
+let voixActive = true;
+let graphe = null;
+let animCinetique = null;
+
+/* =========================================================
+   2. DÉFINITION DES EXPÉRIENCES
+   ========================================================= */
+const EXPERIENCES = {
+  ohm: {
+    titre: "Loi d'Ohm",
+    objectif: "Découvrir la relation entre la tension U, l'intensité I et la résistance R.",
+    question: "Si on double la tension aux bornes de la résistance, que devient l'intensité du courant selon toi ?",
+    curseurs: [
+      { id: 'U', nom: 'Tension U', unite: 'V', min: 0, max: 12, pas: 0.5, val: 6 },
+      { id: 'R', nom: 'Résistance R', unite: 'Ω', min: 10, max: 1000, pas: 10, val: 100 }
+    ],
+    colonnes: ['U (V)', 'R (Ω)', 'I (mA)'],
+    calcul: v => ({ I: v.U / v.R * 1000 }),
+    ligne: (v, c) => [v.U.toFixed(1), v.R, c.I.toFixed(1)],
+    axeX: 'I (mA)', axeY: 'U (V)',
+    point: (v, c) => ({ x: c.I, y: v.U })
+  },
+  refraction: {
+    titre: "Réfraction de la lumière",
+    objectif: "Observer comment un rayon lumineux change de direction en passant d'un milieu à un autre.",
+    question: "Quand le rayon passe de l'air à l'eau, penses-tu qu'il se rapproche ou s'éloigne de la normale ?",
+    curseurs: [
+      { id: 'i1', nom: "Angle d'incidence i1", unite: '°', min: 0, max: 89, pas: 1, val: 40 }
+    ],
+    choix: { id: 'milieu', options: [
+      ['air-eau', 'Air → Eau'], ['air-verre', 'Air → Verre'],
+      ['eau-air', 'Eau → Air'], ['verre-air', 'Verre → Air']
+    ], val: 'air-eau' },
+    colonnes: ['Milieux', 'i1 (°)', 'i2 (°)'],
+    calcul: v => {
+      const n = { air: 1.00, eau: 1.33, verre: 1.50 };
+      const [m1, m2] = v.milieu.split('-');
+      const n1 = n[m1], n2 = n[m2];
+      const s = n1 / n2 * Math.sin(v.i1 * Math.PI / 180);
+      return { n1, n2, totale: s > 1, i2: s > 1 ? null : Math.asin(s) * 180 / Math.PI };
+    },
+    ligne: (v, c) => [v.milieu, v.i1, c.totale ? 'réflexion totale' : c.i2.toFixed(1)],
+    axeX: 'sin i1', axeY: 'sin i2',
+    point: (v, c) => c.totale ? null : ({ x: Math.sin(v.i1 * Math.PI / 180), y: Math.sin(c.i2 * Math.PI / 180) })
+  },
+  cinetique: {
+    titre: "Cinétique : hydrolyse du chlorure de tertiobutyle",
+    objectif: "Voir comment la température influence la vitesse d'une réaction, en suivant la conductivité (modèle simplifié).",
+    question: "Si on chauffe la solution de 20 °C à 30 °C, la réaction ira-t-elle plus vite, moins vite ou à la même vitesse ? Pourquoi ?",
+    curseurs: [
+      { id: 'T', nom: 'Température', unite: '°C', min: 15, max: 45, pas: 1, val: 20 },
+      { id: 'C', nom: 'Concentration initiale', unite: 'mol/L', min: 0.05, max: 0.2, pas: 0.01, val: 0.1 },
+      { id: 't', nom: 'Temps écoulé', unite: 'min', min: 0, max: 120, pas: 1, val: 0 }
+    ],
+    colonnes: ['T (°C)', 'C (mol/L)', 't (min)', 'σ (u.a.)'],
+    // Modèle simplifié : sigma(t) = sigmaMax (1 - e^(-k t)) ; k double tous les 10 °C
+    calcul: v => {
+      const k = 0.03 * Math.pow(2, (v.T - 20) / 10);
+      const sMax = 1000 * v.C;
+      return { k, sigma: sMax * (1 - Math.exp(-k * v.t)), tDemi: Math.log(2) / k };
+    },
+    ligne: (v, c) => [v.T, v.C.toFixed(2), v.t, c.sigma.toFixed(1)],
+    axeX: 't (min)', axeY: 'σ (unités arbitraires)',
+    point: (v, c) => ({ x: v.t, y: c.sigma })
+  }
+};
+
+/* =========================================================
+   3. NAVIGATION
+   ========================================================= */
+function allerAccueil() {
+  arreterAnimation();
+  document.getElementById('ecranLabo').classList.add('cache');
+  document.getElementById('ecranAccueil').classList.remove('cache');
+  window.speechSynthesis && speechSynthesis.cancel();
+}
+
+function ouvrirLabo(id, infosIA) {
+  expCourante = id;
+  const e = EXPERIENCES[id];
+  mesures = [];
+  predictionFaite = false;
+  valeurs = {};
+  e.curseurs.forEach(c => valeurs[c.id] = c.val);
+  if (e.choix) valeurs[e.choix.id] = e.choix.val;
+
+  document.getElementById('titreTP').textContent = (infosIA && infosIA.titre) || e.titre;
+  document.getElementById('objectifTP').textContent = (infosIA && infosIA.objectif) || e.objectif;
+  document.getElementById('rapport').innerHTML = '';
+  document.getElementById('chat').innerHTML = '';
+  majBadge();
+
+  construireSimulation();
+  majTable();
+  initGraphe();
+
+  document.getElementById('ecranAccueil').classList.add('cache');
+  document.getElementById('ecranLabo').classList.remove('cache');
+  window.scrollTo(0, 0);
+
+  const question = (infosIA && infosIA.question_prediction) || e.question;
+  ajouterBulle('prof', "Avant de manipuler, fais une prédiction : " + question);
+}
+
+function majBadge() {
+  document.getElementById('etapeBadge').textContent =
+    predictionFaite ? 'Étape 2 : expérimente !' : 'Étape 1 : prédiction';
+}
+
+/* =========================================================
+   4. SIMULATIONS
+   ========================================================= */
+function construireSimulation() {
+  const e = EXPERIENCES[expCourante];
+  const zone = document.getElementById('zoneSim');
+  let html = '<canvas class="sim" id="canvasSim" width="600" height="320"></canvas>';
+  html += '<div id="afficheur" style="margin-top:10px;"></div>';
+  if (e.choix) {
+    html += '<div class="curseur"><label>Milieux</label><select id="sel_' + e.choix.id + '">' +
+      e.choix.options.map(o => `<option value="${o[0]}">${o[1]}</option>`).join('') + '</select></div>';
+  }
+  e.curseurs.forEach(c => {
+    html += `<div class="curseur"><label>${c.nom}<span id="val_${c.id}"></span></label>
+      <input type="range" id="cur_${c.id}" min="${c.min}" max="${c.max}" step="${c.pas}" value="${c.val}"></div>`;
+  });
+  if (expCourante === 'cinetique') {
+    html += '<button class="btn secondaire" onclick="lancerReaction()">▶️ Lancer la réaction (accéléré)</button> ' +
+            '<span class="note">Modèle simplifié à but pédagogique.</span>';
+  }
+  zone.innerHTML = html;
+
+  e.curseurs.forEach(c => {
+    document.getElementById('cur_' + c.id).addEventListener('input', ev => {
+      valeurs[c.id] = parseFloat(ev.target.value);
+      dessiner();
+    });
+  });
+  if (e.choix) {
+    document.getElementById('sel_' + e.choix.id).addEventListener('change', ev => {
+      valeurs[e.choix.id] = ev.target.value;
+      dessiner();
+    });
+  }
+  dessiner();
+}
+
+function dessiner() {
+  const e = EXPERIENCES[expCourante];
+  e.curseurs.forEach(c => {
+    const v = valeurs[c.id];
+    document.getElementById('val_' + c.id).textContent = (c.pas < 1 ? v.toFixed(2) : v) + ' ' + c.unite;
+  });
+  const calc = e.calcul(valeurs);
+  const cv = document.getElementById('canvasSim');
+  const ctx = cv.getContext('2d');
+  ctx.clearRect(0, 0, cv.width, cv.height);
+  if (expCourante === 'ohm') dessinerOhm(ctx, calc);
+  if (expCourante === 'refraction') dessinerRefraction(ctx, calc);
+  if (expCourante === 'cinetique') dessinerCinetique(ctx, calc);
+}
+
+function dessinerOhm(ctx, c) {
+  const U = valeurs.U;
+  ctx.lineWidth = 4; ctx.strokeStyle = '#1b1f2a';
+  ctx.strokeRect(80, 60, 440, 200);
+  // Générateur
+  ctx.fillStyle = '#fbfaf6'; ctx.fillRect(60, 120, 40, 80);
+  ctx.fillStyle = '#e8792b'; ctx.fillRect(66, 135, 28, 50);
+  ctx.fillStyle = '#fff'; ctx.font = 'bold 14px sans-serif'; ctx.fillText('+', 74, 150); ctx.fillText('−', 75, 178);
+  ctx.fillStyle = '#1b1f2a'; ctx.font = '15px sans-serif'; ctx.fillText('U = ' + U.toFixed(1) + ' V', 110, 165);
+  // Résistance
+  ctx.fillStyle = '#fbfaf6'; ctx.fillRect(240, 45, 120, 30);
+  ctx.strokeRect(250, 48, 100, 24);
+  ctx.fillStyle = '#1b1f2a'; ctx.fillText('R = ' + valeurs.R + ' Ω', 262, 100);
+  // Ampoule témoin (éclat proportionnel à la puissance)
+  const P = U * U / valeurs.R;
+  const eclat = Math.min(1, P / 3);
+  ctx.beginPath(); ctx.arc(420, 260, 22, 0, 2 * Math.PI);
+  ctx.fillStyle = `rgba(255, ${200 + 55 * eclat}, 0, ${0.15 + 0.85 * eclat})`; ctx.fill(); ctx.stroke();
+  // Ampèremètre
+  ctx.beginPath(); ctx.arc(520, 160, 26, 0, 2 * Math.PI);
+  ctx.fillStyle = '#fff'; ctx.fill(); ctx.stroke();
+  ctx.fillStyle = '#1b1f2a'; ctx.font = 'bold 18px sans-serif'; ctx.fillText('A', 513, 167);
+  // Électrons animés (vitesse proportionnelle à I)
+  document.getElementById('afficheur').innerHTML =
+    `<span class="afficheur">I = ${c.I.toFixed(1)} mA</span> <span class="note">lu sur l'ampèremètre</span>`;
+}
+
+function dessinerRefraction(ctx, c) {
+  const W = 600, H = 320, cx = W / 2, cy = H / 2;
+  const [m1, m2] = valeurs.milieu.split('-');
+  const couleurs = { air: '#fbfaf6', eau: '#d6ecfb', verre: '#e4eef0' };
+  ctx.fillStyle = couleurs[m1]; ctx.fillRect(0, 0, W, cy);
+  ctx.fillStyle = couleurs[m2]; ctx.fillRect(0, cy, W, cy);
+  ctx.fillStyle = '#5b6272'; ctx.font = '14px sans-serif';
+  ctx.fillText(m1 + ' (n = ' + c.n1.toFixed(2) + ')', 12, 22);
+  ctx.fillText(m2 + ' (n = ' + c.n2.toFixed(2) + ')', 12, H - 12);
+  // Normale
+  ctx.setLineDash([6, 6]); ctx.strokeStyle = '#9aa0ad'; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(cx, 10); ctx.lineTo(cx, H - 10); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillText('normale', cx + 6, 22);
+  const L = 150, a1 = valeurs.i1 * Math.PI / 180;
+  // Rayon incident
+  ctx.strokeStyle = '#d62828'; ctx.lineWidth = 4;
+  ctx.beginPath(); ctx.moveTo(cx - L * Math.sin(a1), cy - L * Math.cos(a1)); ctx.lineTo(cx, cy); ctx.stroke();
+  // Rayon réfléchi (faible ou total)
+  ctx.strokeStyle = c.totale ? '#d62828' : 'rgba(214,40,40,0.25)';
+  ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + L * Math.sin(a1), cy - L * Math.cos(a1)); ctx.stroke();
+  let texte;
+  if (!c.totale) {
+    const a2 = c.i2 * Math.PI / 180;
+    ctx.strokeStyle = '#d62828';
+    ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + L * Math.sin(a2), cy + L * Math.cos(a2)); ctx.stroke();
+    texte = `i1 = ${valeurs.i1}° &nbsp; i2 = ${c.i2.toFixed(1)}°`;
+  } else {
+    texte = `i1 = ${valeurs.i1}° &nbsp; RÉFLEXION TOTALE`;
+  }
+  document.getElementById('afficheur').innerHTML = `<span class="afficheur">${texte}</span>`;
+}
+
+function dessinerCinetique(ctx, c) {
+  const W = 600, H = 320;
+  // Bécher
+  ctx.strokeStyle = '#1b1f2a'; ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.moveTo(60, 60); ctx.lineTo(60, 280); ctx.lineTo(240, 280); ctx.lineTo(240, 60); ctx.stroke();
+  const avancement = c.sigma / (1000 * valeurs.C);
+  ctx.fillStyle = `rgb(${200 - 60 * avancement}, ${225 - 40 * avancement}, 250)`;
+  ctx.fillRect(62, 120, 176, 158);
+  // Ions qui apparaissent
+  ctx.fillStyle = '#2563c9';
+  const nb = Math.round(40 * avancement);
+  for (let i = 0; i < nb; i++) {
+    const x = 75 + (i * 37) % 150, y = 135 + (i * 53) % 130;
+    ctx.beginPath(); ctx.arc(x, y, 4, 0, 2 * Math.PI); ctx.fill();
+  }
+  ctx.fillStyle = '#1b1f2a'; ctx.font = '14px sans-serif';
+  ctx.fillText('T = ' + valeurs.T + ' °C', 70, 110);
+  // Conductimètre
+  ctx.fillStyle = '#1b1f2a'; ctx.fillRect(300, 100, 240, 110);
+  ctx.fillStyle = '#7CFFB2'; ctx.font = 'bold 26px monospace';
+  ctx.fillText(c.sigma.toFixed(1) + ' u.a.', 320, 150);
+  ctx.font = '13px monospace'; ctx.fillText('conductimètre', 320, 185);
+  ctx.strokeStyle = '#1b1f2a'; ctx.beginPath(); ctx.moveTo(200, 130); ctx.lineTo(300, 155); ctx.stroke();
+  document.getElementById('afficheur').innerHTML =
+    `<span class="afficheur">t = ${valeurs.t} min &nbsp; σ = ${c.sigma.toFixed(1)}</span>`;
+}
+
+function lancerReaction() {
+  arreterAnimation();
+  valeurs.t = 0;
+  animCinetique = setInterval(() => {
+    valeurs.t += 1;
+    document.getElementById('cur_t').value = valeurs.t;
+    dessiner();
+    if (valeurs.t % 10 === 0) mesurer(true);
+    if (valeurs.t >= 120) arreterAnimation();
+  }, 80);
+}
+function arreterAnimation() { if (animCinetique) { clearInterval(animCinetique); animCinetique = null; } }
+
+/* =========================================================
+   5. MESURES ET GRAPHIQUE
+   ========================================================= */
+function mesurer(silencieux) {
+  const e = EXPERIENCES[expCourante];
+  const c = e.calcul(valeurs);
+  mesures.push({ valeurs: { ...valeurs }, calcul: c, ligne: e.ligne(valeurs, c) });
+  majTable();
+  majGraphe();
+}
+function viderMesures() { mesures = []; majTable(); majGraphe(); }
+
+function majTable() {
+  const e = EXPERIENCES[expCourante];
+  let html = '<tr><th>#</th>' + e.colonnes.map(c => `<th>${c}</th>`).join('') + '</tr>';
+  mesures.forEach((m, i) => html += `<tr><td>${i + 1}</td>` + m.ligne.map(x => `<td>${x}</td>`).join('') + '</tr>');
+  if (!mesures.length) html += `<tr><td colspan="${e.colonnes.length + 1}" class="note">Règle les curseurs puis appuie sur « Mesurer ».</td></tr>`;
+  document.getElementById('tableMesures').innerHTML = html;
+}
+
+function initGraphe() {
+  const e = EXPERIENCES[expCourante];
+  if (graphe) graphe.destroy();
+  if (typeof Chart === 'undefined') return;
+  graphe = new Chart(document.getElementById('graphe'), {
+    type: 'scatter',
+    data: { datasets: [{ label: e.axeY + ' en fonction de ' + e.axeX, data: [], backgroundColor: '#0f8a5f', showLine: false, pointRadius: 5 }] },
+    options: { animation: false, scales: { x: { title: { display: true, text: e.axeX } }, y: { title: { display: true, text: e.axeY } } } }
+  });
+}
+function majGraphe() {
+  if (!graphe) return;
+  const e = EXPERIENCES[expCourante];
+  graphe.data.datasets[0].data = mesures.map(m => e.point(m.valeurs, m.calcul)).filter(Boolean);
+  graphe.update();
+}
+
+/* =========================================================
+   6. APPELS À L'IA
+   ========================================================= */
+async function appelIA(mode, texte, image, contexte) {
+  const r = await fetch('/api/ia', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ mode, texte, image, contexte })
+  });
+  const data = await r.json();
+  if (!r.ok) throw new Error((data.erreur || 'Erreur') + ' ' + (data.detail ? JSON.stringify(data.detail) : ''));
+  return data.reponse;
+}
+
+// A. Comprendre la demande (texte, voix ou photo)
+async function comprendre() {
+  const texte = document.getElementById('texteAccueil').value.trim();
+  const msg = document.getElementById('msgAccueil');
+  if (!texte && !photoBase64) { msg.textContent = "Écris, dicte ou prends une photo de ta leçon d'abord."; return; }
+  const btn = document.getElementById('btnComprendre');
+  btn.disabled = true; msg.textContent = '🔎 Le professeur lit ta demande…';
+  try {
+    const rep = await appelIA('comprendre', texte, photoBase64);
+    const json = JSON.parse(rep.replace(/```json|```/g, '').trim());
+    if (json.experience && EXPERIENCES[json.experience]) {
+      msg.textContent = '';
+      ouvrirLabo(json.experience, json);
+    } else {
+      msg.textContent = json.message_si_aucune || "Je n'ai pas d'expérience pour ce sujet. Essaie : loi d'Ohm, réfraction ou cinétique.";
+    }
+  } catch (e) {
+    msg.textContent = "⚠️ Problème de connexion à l'IA. Choisis une expérience ci-dessous. (" + e.message.slice(0, 120) + ")";
+  } finally { btn.disabled = false; }
+}
+
+// B. Le professeur de TP
+async function parlerAuProf() {
+  const champ = document.getElementById('texteProf');
+  const texte = champ.value.trim();
+  if (!texte) return;
+  ajouterBulle('eleve', texte);
+  champ.value = '';
+  const etaitPrediction = !predictionFaite;
+  const contexte = {
+    experience: EXPERIENCES[expCourante].titre,
+    etape: etaitPrediction ? "L'élève donne sa PRÉDICTION. Commente-la sans donner la réponse, puis dis-lui quoi manipuler pour la vérifier." : "L'élève expérimente.",
+    prediction_faite: true,
+    valeurs_curseurs: valeurs,
+    resultat_actuel: EXPERIENCES[expCourante].calcul(valeurs),
+    mesures: mesures.map(m => m.ligne)
+  };
+  predictionFaite = true; majBadge();
+  const btn = document.getElementById('btnProf'); btn.disabled = true;
+  const attente = ajouterBulle('prof', '…');
+  try {
+    const rep = await appelIA('prof', texte, null, contexte);
+    attente.textContent = rep;
+    parler(rep);
+  } catch (e) {
+    attente.textContent = "Je n'arrive pas à me connecter. Continue à manipuler et note tes mesures !";
+  } finally { btn.disabled = false; }
+}
+
+// C. Le compte rendu
+async function genererRapport() {
+  const zone = document.getElementById('rapport');
+  if (mesures.length < 3) { zone.innerHTML = '<p class="note">Fais au moins 3 mesures avant de générer le compte rendu.</p>'; return; }
+  const btn = document.getElementById('btnRapport'); btn.disabled = true;
+  zone.innerHTML = '<p class="chargement">✍️ Rédaction du compte rendu…</p>';
+  try {
+    const e = EXPERIENCES[expCourante];
+    const rep = await appelIA('rapport', 'Rédige le compte rendu.', null, {
+      experience: e.titre, objectif: e.objectif, colonnes: e.colonnes, mesures: mesures.map(m => m.ligne)
+    });
+    zone.innerHTML = markdownSimple(rep) +
+      '<button class="btn secondaire" style="margin-top:10px" onclick="window.print()">🖨️ Imprimer / PDF</button>';
+  } catch (e) {
+    zone.innerHTML = '<p class="note">⚠️ Impossible de générer le compte rendu pour le moment.</p>';
+  } finally { btn.disabled = false; }
+}
+
+/* =========================================================
+   7. UTILITAIRES : chat, voix, photo, markdown
+   ========================================================= */
+function ajouterBulle(qui, texte) {
+  const d = document.createElement('div');
+  d.className = 'bulle ' + qui; d.textContent = texte;
+  const chat = document.getElementById('chat');
+  chat.appendChild(d); chat.scrollTop = chat.scrollHeight;
+  if (qui === 'prof' && texte !== '…') parler(texte);
+  return d;
+}
+
+function parler(texte) {
+  if (!voixActive || !window.speechSynthesis) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(texte);
+  u.lang = 'fr-FR'; u.rate = 1.02;
+  speechSynthesis.speak(u);
+}
+function basculerVoix() {
+  voixActive = !voixActive;
+  document.getElementById('btnVoix').textContent = '🔊 Voix : ' + (voixActive ? 'oui' : 'non');
+  if (!voixActive && window.speechSynthesis) speechSynthesis.cancel();
+}
+
+// Dictée vocale (Chrome / Android). Sinon, on garde la saisie texte.
+function brancherMicro(idBouton, idChamp, apres) {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const bouton = document.getElementById(idBouton);
+  if (!SR) { bouton.onclick = () => alert("La dictée n'est pas disponible sur ce navigateur. Écris ta phrase."); return; }
+  bouton.onclick = () => {
+    const rec = new SR(); rec.lang = 'fr-FR'; rec.interimResults = false;
+    bouton.classList.add('ecoute');
+    rec.onresult = ev => { document.getElementById(idChamp).value = ev.results[0][0].transcript; apres && apres(); };
+    rec.onend = () => bouton.classList.remove('ecoute');
+    rec.onerror = () => bouton.classList.remove('ecoute');
+    rec.start();
+  };
+}
+brancherMicro('microAccueil', 'texteAccueil', comprendre);
+brancherMicro('microProf', 'texteProf', parlerAuProf);
+document.getElementById('texteAccueil').addEventListener('keydown', e => { if (e.key === 'Enter') comprendre(); });
+document.getElementById('texteProf').addEventListener('keydown', e => { if (e.key === 'Enter') parlerAuProf(); });
+
+// Photo : réduite à 1024 px pour un envoi rapide
+document.getElementById('photoLecon').addEventListener('change', ev => {
+  const f = ev.target.files[0]; if (!f) return;
+  const img = new Image();
+  img.onload = () => {
+    const echelle = Math.min(1, 1024 / Math.max(img.width, img.height));
+    const c = document.createElement('canvas');
+    c.width = img.width * echelle; c.height = img.height * echelle;
+    c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+    photoBase64 = c.toDataURL('image/jpeg', 0.8).split(',')[1];
+    document.getElementById('infoPhoto').textContent = '✅ Photo prête';
+    comprendre();
+  };
+  img.src = URL.createObjectURL(f);
+});
+
+// Markdown minimal : titres, gras, listes, tableaux
+function markdownSimple(md) {
+  const echap = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const lignes = echap(md).split('\n');
+  let html = '', table = [];
+  const viderTable = () => {
+    if (!table.length) return;
+    const rangs = table.filter(l => !/^\s*\|?\s*:?-{2,}/.test(l));
+    html += '<table>' + rangs.map((l, i) => '<tr>' + l.replace(/^\||\|$/g, '').split('|')
+      .map(x => i === 0 ? `<th>${x.trim()}</th>` : `<td>${x.trim()}</td>`).join('') + '</tr>').join('') + '</table>';
+    table = [];
+  };
+  lignes.forEach(l => {
+    if (l.trim().startsWith('|')) { table.push(l.trim()); return; }
+    viderTable();
+    l = l.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
+    if (/^#{1,3} /.test(l)) html += '<h3>' + l.replace(/^#+ /, '') + '</h3>';
+    else if (/^\s*[-*] /.test(l)) html += '<li>' + l.replace(/^\s*[-*] /, '') + '</li>';
+    else if (l.trim()) html += '<p>' + l + '</p>';
+  });
+  viderTable();
+  return html;
+}
+</script>
+</body>
+</html>
