@@ -70,13 +70,21 @@ module.exports = async (req, res) => {
     };
     if (mode === 'comprendre') corps.generationConfig.responseMimeType = 'application/json';
 
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${modele}:generateContent`;
-    const r = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-goog-api-key': cle },
-      body: JSON.stringify(corps)
-    });
-    const data = await r.json();
+    // Si le modèle est surchargé (erreurs 429, 500, 503), on réessaie
+    // puis on passe à un modèle de secours.
+    const modeles = [modele, modele, 'gemini-flash-lite-latest', 'gemini-flash-latest'];
+    let r, data;
+    for (let i = 0; i < modeles.length; i++) {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${modeles[i]}:generateContent`;
+      r = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-goog-api-key': cle },
+        body: JSON.stringify(corps)
+      });
+      data = await r.json();
+      if (r.ok || ![429, 500, 503].includes(r.status)) break;
+      await new Promise(attente => setTimeout(attente, 800));
+    }
 
     if (!r.ok) {
       res.status(502).json({ erreur: 'Erreur Gemini', detail: data.error ? data.error.message : data });
