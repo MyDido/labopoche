@@ -116,7 +116,10 @@ module.exports = async (req, res) => {
     // Si le modèle est surchargé (erreurs 429, 500, 503) ou ne répond pas
     // à temps, on passe au modèle de secours suivant.
     // La génération d'une simulation est longue : 50 s au total pour ce mode, 15 s par essai pour les autres.
-    const modeles = [modele, 'gemini-flash-lite-latest', 'gemini-flash-latest'];
+    // Pour générer une simulation, le modèle « lite » est le plus rapide (environ 10 s) : on le tente d'abord
+    const modeles = mode === 'generer'
+      ? ['gemini-flash-lite-latest', modele, 'gemini-flash-latest']
+      : [modele, 'gemini-flash-lite-latest', 'gemini-flash-latest'];
     const finLimite = Date.now() + (mode === 'generer' ? 50000 : 45000);
     let r = null, data = null;
     for (let i = 0; i < modeles.length; i++) {
@@ -128,7 +131,7 @@ module.exports = async (req, res) => {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'x-goog-api-key': cle },
           body: JSON.stringify(corps),
-          signal: AbortSignal.timeout(mode === 'generer' ? reste : Math.min(15000, reste))
+          signal: AbortSignal.timeout(mode === 'generer' ? (i === 0 ? Math.min(30000, reste) : reste) : Math.min(15000, reste))
         });
         data = await r.json();
         // Certains modèles refusent de couper la réflexion : on réessaie le même modèle sans ce réglage
