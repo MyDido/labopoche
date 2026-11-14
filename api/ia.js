@@ -70,20 +70,29 @@ module.exports = async (req, res) => {
     };
     if (mode === 'comprendre') corps.generationConfig.responseMimeType = 'application/json';
 
-    // Si le modèle est surchargé (erreurs 429, 500, 503), on réessaie
-    // puis on passe à un modèle de secours.
-    const modeles = [modele, modele, 'gemini-flash-lite-latest', 'gemini-flash-latest'];
-    let r, data;
+    // Si le modèle est surchargé (erreurs 429, 500, 503) ou ne répond pas
+    // en 15 secondes, on passe au modèle de secours suivant.
+    const modeles = [modele, 'gemini-flash-lite-latest', 'gemini-flash-latest'];
+    let r = null, data = null;
     for (let i = 0; i < modeles.length; i++) {
       const url = `https://generativelanguage.googleapis.com/v1beta/models/${modeles[i]}:generateContent`;
-      r = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-goog-api-key': cle },
-        body: JSON.stringify(corps)
-      });
-      data = await r.json();
-      if (r.ok || ![429, 500, 503].includes(r.status)) break;
-      await new Promise(attente => setTimeout(attente, 800));
+      try {
+        r = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-goog-api-key': cle },
+          body: JSON.stringify(corps),
+          signal: AbortSignal.timeout(15000)
+        });
+        data = await r.json();
+        if (r.ok || ![429, 500, 503].includes(r.status)) break;
+      } catch (e) {
+        r = null; // délai dépassé : on essaie le modèle suivant
+      }
+    }
+
+    if (!r) {
+      res.status(504).json({ erreur: 'Gemini ne répond pas', detail: 'Les serveurs de Google sont surchargés, réessaie dans une minute.' });
+      return;
     }
 
     if (!r.ok) {
