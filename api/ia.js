@@ -3,8 +3,9 @@
 // La clé reste ici, côté serveur : elle n'est jamais visible dans le navigateur.
 
 const PROMPTS = {
-  comprendre: `Tu es l'assistant de LaboPoche, un laboratoire virtuel de physique-chimie pour les lycéens togolais.
-L'élève t'envoie une photo de leçon, un texte ou une phrase dictée.
+  comprendre: `Tu es l'assistant de LaboPoche, un laboratoire virtuel de sciences.
+L'élève t'envoie une photo de leçon, un texte ou une phrase dictée. Le plus souvent, c'est une notion qu'il n'a pas comprise, dite avec ses mots (ex : « je comprends pas pourquoi la lumière se plie dans l'eau », « c'est quoi la loi d'Ohm en vrai »), parfois juste le nom d'une expérience.
+Repère la notion qu'il n'a pas comprise, puis choisis l'expérience la plus utile pour la lui faire comprendre en manipulant.
 Choisis UNE expérience parmi :
 - "ohm" : loi d'Ohm pour UNE résistance (relation entre tension, intensité et résistance). Pas pour les circuits en série ou en dérivation, les lois des nœuds ou des mailles, les condensateurs : ce sont d'autres sujets ("aucune")
 - "refraction" : réfraction de la lumière, indice de réfraction, loi de Snell-Descartes, réflexion totale
@@ -16,8 +17,8 @@ Réponds UNIQUEMENT en JSON valide, sans texte autour :
   "sujet": "nom court du sujet scientifique demandé (ex : Chute libre, Pendule simple, Photosynthèse)",
   "scientifique": true si la demande porte sur les sciences (physique, chimie, SVT, niveau lycée ou université), sinon false,
   "titre": "titre court du TP",
-  "objectif": "ce que l'élève va découvrir, en une phrase simple",
-  "question_prediction": "une question qui demande à l'élève de prédire le résultat AVANT de manipuler",
+  "objectif": "ce que l'élève va comprendre grâce à l'expérience, en lien direct avec sa difficulté, en une phrase simple",
+  "question_prediction": "une question de prédiction liée précisément à ce que l'élève n'a pas compris, à laquelle l'expérience va répondre (il doit prédire AVANT de manipuler)",
   "message_si_aucune": "si la demande n'est pas scientifique, explique gentiment que LaboPoche fait des expériences de sciences, sinon chaîne vide"
 }`,
 

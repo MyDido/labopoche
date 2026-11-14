@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LaboPoche | Le labo de sciences dans ta poche</title>
-<meta name="description" content="LaboPoche : un laboratoire virtuel de physique-chimie pour les lycéens. Prédis, manipule une simulation, et un professeur IA t'aide à comprendre jusqu'au compte rendu de TP.">
+<title>LaboPoche | Toute expérience, dans ta poche.</title>
+<meta name="description" content="LaboPoche, toute expérience dans ta poche : un laboratoire virtuel de sciences pour les élèves. Prédis, manipule une simulation, et un professeur IA t'aide à comprendre jusqu'au compte rendu de TP.">
 <meta name="theme-color" content="#F6F4EE">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="LaboPoche">
 <meta property="og:locale" content="fr_FR">
-<meta property="og:title" content="LaboPoche | Le labo de sciences dans ta poche">
+<meta property="og:title" content="LaboPoche | Toute expérience, dans ta poche.">
 <meta property="og:description" content="Fais de vraies expériences de physique-chimie sur ton téléphone, même sans laboratoire : loi d'Ohm, réfraction, cinétique chimique, avec un professeur IA.">
 <meta property="og:url" content="https://labopoche.vercel.app/">
 <meta property="og:image" content="https://labopoche.vercel.app/og-image.png">
@@ -28,8 +28,8 @@
      CHARTE GRAPHIQUE (variables CSS)
      ========================================================= */
   :root {
-    --vert: #0F8A5F; --vert-fonce: #0B7A53; --vert-clair: #E3F4EC;
-    --orange: #E8792B; --orange-clair: #FDF0E6;
+    --vert: #1E2A5A; --vert-fonce: #1E2A5A; --vert-clair: #E8EBF5;
+    --orange: #F28C1E; --orange-clair: #FEF1E3;
     --encre: #1B1F2A; --doux: #5B6272;
     --fond: #F6F4EE; --carte: #FFFFFF; --bord: #E2DED3;
     --bleu: #2563C9; --bleu-clair: #E8EEFC;
@@ -56,8 +56,8 @@
   .entete { background: var(--carte); border-bottom: 1px solid var(--bord); padding: 10px 16px; display: flex; align-items: center; gap: 12px; }
   .marque { display: flex; align-items: center; gap: 10px; min-height: 44px; min-width: 0; color: var(--encre); text-decoration: none; }
   .logo { width: 38px; height: 38px; flex: none; }
-  .nom { font-family: var(--police-titres); font-weight: 700; font-size: 21px; letter-spacing: -.02em; white-space: nowrap; }
-  .poche { color: var(--vert); }
+  .nom { color: #1E2A5A; font-family: var(--police-titres); font-weight: 700; font-size: 21px; letter-spacing: -.02em; white-space: nowrap; }
+  .poche { color: #F28C1E; }
   .slogan { font-size: 13px; color: var(--doux); border-left: 1px solid var(--bord); padding-left: 12px; white-space: nowrap; }
   @media (max-width: 640px) { .slogan { display: none; } }
   .actions-entete { margin-left: auto; display: flex; gap: 8px; flex: none; }
@@ -69,12 +69,12 @@
 
   /* ---------- Boutons ---------- */
   .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 10px 18px; border-radius: 12px; border: 1px solid transparent; background: var(--vert-fonce); color: #fff; font-weight: 600; font-size: 16px; text-decoration: none; text-align: center; transition: background .18s, transform .18s, box-shadow .18s; }
-  .btn:hover { background: #096846; }
+  .btn:hover { background: #151E44; }
   .btn:active { transform: translateY(1px); }
   .btn-secondaire { background: var(--vert-clair); color: var(--vert-fonce); }
-  .btn-secondaire:hover { background: #D3ECDF; }
+  .btn-secondaire:hover { background: #D9DEEE; }
   .btn-orange { background: var(--orange); color: var(--encre); }
-  .btn-orange:hover { background: #F08A40; }
+  .btn-orange:hover { background: #F59E3F; }
   .btn-contour { background: #fff; color: var(--encre); border-color: var(--bord); }
   .btn-contour:hover { background: var(--fond); }
   .btn-plein { width: 100%; }
@@ -136,7 +136,7 @@
   #carteDemande h3 { font-size: 18px; margin-bottom: 4px; }
   .saisie { display: flex; gap: 10px; align-items: center; }
   input[type=text], select { flex: 1; min-width: 0; width: 100%; min-height: 48px; font: inherit; font-size: 16px; padding: 10px 14px; border: 1px solid var(--bord); border-radius: 12px; background: #fff; color: var(--encre); }
-  input[type=text]:focus, select:focus { border-color: var(--vert); outline: none; box-shadow: 0 0 0 3px rgba(15, 138, 95, .18); }
+  input[type=text]:focus, select:focus { border-color: var(--vert); outline: none; box-shadow: 0 0 0 3px rgba(30, 42, 90, .18); }
   .micro { width: 56px; height: 56px; border-radius: 50%; border: 0; background: var(--orange); color: var(--encre); font-size: 24px; flex: none; display: grid; place-items: center; transition: background .18s; }
   .micro.ecoute { background: #C2410C; color: #fff; animation: pulse 1.2s infinite; }
   .micro.indispo { background: #ECE9E1; color: #8A909C; cursor: not-allowed; }
@@ -214,7 +214,7 @@
   .prof-titre { display: flex; align-items: center; gap: 10px; }
   .avatar { display: inline-grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; background: var(--vert-clair); font-size: 22px; flex: none; }
   .avatar.parle { animation: parle 1s ease-in-out infinite; }
-  @keyframes parle { 50% { box-shadow: 0 0 0 7px rgba(15, 138, 95, .2); } }
+  @keyframes parle { 50% { box-shadow: 0 0 0 7px rgba(30, 42, 90, .2); } }
   .etat-prof { display: block; font-size: 13px; font-weight: 500; color: var(--vert-fonce); font-family: var(--police-texte); min-height: 1.2em; }
   .etapes { list-style: none; padding: 0; margin: 0 0 14px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; counter-reset: etape; }
   .etapes li { counter-increment: etape; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 4px; border-radius: 10px; background: var(--fond); color: var(--doux); text-align: center; font-size: 12.5px; line-height: 1.25; font-weight: 500; transition: background .2s, color .2s; }
@@ -316,7 +316,7 @@
   .accueil-haut h1 { font-size: clamp(30px, 8vw, 52px); max-width: 15ch; margin-bottom: 10px; }
   .accueil-sous { color: var(--doux); margin: 0 0 26px; font-size: 17px; max-width: 40ch; }
   .recherche { display: flex; align-items: center; gap: 2px; width: 100%; max-width: 640px; background: #fff; border: 1.5px solid var(--bord); border-radius: 999px; padding: 5px 5px 5px 20px; box-shadow: 0 6px 24px rgba(27, 31, 42, .08); transition: border-color .18s, box-shadow .18s; }
-  .recherche:focus-within { border-color: var(--vert); box-shadow: 0 0 0 4px rgba(15, 138, 95, .15), 0 6px 24px rgba(27, 31, 42, .08); }
+  .recherche:focus-within { border-color: var(--vert); box-shadow: 0 0 0 4px rgba(30, 42, 90, .15), 0 6px 24px rgba(27, 31, 42, .08); }
   .recherche input[type=text] { border: 0; padding: 10px 4px; font-size: 17px; min-height: 48px; background: transparent; }
   .recherche input[type=text]:focus { box-shadow: none; }
   .rech-btn { width: 44px; height: 44px; flex: none; border: 0; border-radius: 50%; background: transparent; color: var(--doux); display: grid; place-items: center; cursor: pointer; transition: background .18s, color .18s; }
@@ -325,7 +325,7 @@
   .rech-btn.ecoute { background: #C2410C; color: #fff; animation: pulse 1.2s infinite; }
   .rech-btn.indispo { opacity: .4; }
   .rech-go { width: 50px; height: 50px; flex: none; border: 0; border-radius: 50%; background: var(--vert-fonce); color: #fff; display: grid; place-items: center; transition: background .18s; }
-  .rech-go:hover { background: #096846; }
+  .rech-go:hover { background: #151E44; }
   .rech-go:disabled { opacity: .55; cursor: progress; }
   .rech-btn .ico, .rech-go .ico { width: 22px; height: 22px; }
   .accueil-haut .statut-micro { font-size: 13px; }
@@ -340,6 +340,9 @@
   }
   .etapes-cm .etape-cm { background: transparent; }
   .icone-etape .ico { width: 24px; height: 24px; }
+
+  .exemples { margin: 14px 0 0; color: var(--doux); font-size: 14px; max-width: 46ch; line-height: 1.4; }
+  .lien-exemple { display: inline-flex; align-items: center; min-height: 44px; padding: 0 2px; border: 0; background: none; color: var(--vert-fonce); font: inherit; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
 
   /* ---------- v2 : écran d'attente ---------- */
   .attente { min-height: calc(100vh - 170px); min-height: calc(100svh - 170px); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
@@ -419,14 +422,11 @@
 <!-- Logo défini une seule fois, réutilisé partout avec <use href="#logo"> -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <symbol id="logo" viewBox="0 0 48 48">
-    <rect x="9" y="2.5" width="30" height="43" rx="7" fill="#FFFFFF" stroke="#1B1F2A" stroke-width="2.5"/>
-    <line x1="20.5" y1="7" x2="27.5" y2="7" stroke="#1B1F2A" stroke-width="2" stroke-linecap="round"/>
-    <path d="M17.6 28 H30.4 L33.6 35 Q34.3 37.5 31.8 37.5 H16.2 Q13.7 37.5 14.4 35 Z" fill="#0F8A5F"/>
-    <circle cx="21" cy="33" r="1.3" fill="#E3F4EC"/>
-    <circle cx="26.5" cy="31" r="1" fill="#E3F4EC"/>
-    <path d="M21 12.5 V21 L14.4 35 Q13.7 37.5 16.2 37.5 H31.8 Q34.3 37.5 33.6 35 L27 21 V12.5" fill="none" stroke="#1B1F2A" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>
-    <line x1="19" y1="12.5" x2="29" y2="12.5" stroke="#1B1F2A" stroke-width="2.2" stroke-linecap="round"/>
-    <path d="M32.5 13 L33.5 15.7 L36.2 16.7 L33.5 17.7 L32.5 20.4 L31.5 17.7 L28.8 16.7 L31.5 15.7 Z" fill="#E8792B"/>
+    <path d="M23.2 18 C18 15 11 14.5 4 15.5 V41 C11 40 18 41 23.2 44 Z" fill="#1E2A5A"/>
+    <path d="M24.8 18 C30 15 37 14.5 44 15.5 V41 C37 40 30 41 24.8 44 Z" fill="#1E2A5A"/>
+    <path d="M24 2 L26 8 L32 10 L26 12 L24 18 L22 12 L16 10 L22 8 Z" fill="#F28C1E"/>
+    <circle cx="34.5" cy="4.5" r="1.6" fill="#F28C1E"/>
+    <circle cx="13.5" cy="5.5" r="1.2" fill="#F28C1E"/>
   </symbol>
   <!-- Icônes de l'interface -->
   <symbol id="i-son" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a10 10 0 0 1 0 14"/></symbol>
@@ -460,7 +460,7 @@
   <a class="marque" href="/" onclick="allerAccueil(); return false;" aria-label="LaboPoche, retour à l'accueil">
     <svg class="logo" aria-hidden="true"><use href="#logo"/></svg>
     <span class="nom">Labo<span class="poche">Poche</span></span>
-    <span class="slogan">Le labo de sciences dans ta poche</span>
+    <span class="slogan">Toute expérience, dans ta poche.</span>
   </a>
   <div class="actions-entete">
     <button class="btn-entete" id="btnAide" onclick="lancerVisite(true)" aria-label="Aide : afficher la visite guidée"><svg class="ico" aria-hidden="true"><use href="#i-aide"/></svg> <span>Aide</span></button>
@@ -475,10 +475,10 @@
   <section id="ecranAccueil">
     <div class="accueil-haut">
       <svg class="logo-accueil" aria-hidden="true"><use href="#logo"/></svg>
-      <h1>Quelle expérience veux-tu faire ?</h1>
-      <p class="accueil-sous">Physique, chimie, SVT : écris-la, dicte-la ou photographie ta leçon.</p>
+      <h1>Qu'est-ce que tu n'as pas compris aujourd'hui ?</h1>
+      <p class="accueil-sous">Décris ta leçon, dicte-la ou prends-la en photo : on la transforme en expérience à manipuler.</p>
       <div class="recherche" id="recherche">
-        <input type="text" id="texteAccueil" placeholder="Ex : la chute libre" aria-label="L'expérience que tu veux faire" enterkeyhint="go" autocomplete="off">
+        <input type="text" id="texteAccueil" placeholder="Ex : je ne comprends pas pourquoi la lumière se plie dans l'eau" aria-label="Ce que tu n'as pas compris" enterkeyhint="go" autocomplete="off">
         <button class="rech-btn" id="microAccueil" aria-label="Dicter ta demande"><svg class="ico" aria-hidden="true"><use href="#i-micro"/></svg></button>
         <label class="rech-btn" title="Photo de ta leçon"><svg class="ico" aria-hidden="true"><use href="#i-photo"/></svg><span class="sr-only">Prendre ta leçon en photo</span>
           <input type="file" accept="image/*" capture="environment" id="photoLecon" class="sr-only">
@@ -488,17 +488,7 @@
       <p class="statut-micro" id="statutMicroAccueil" aria-live="polite"></p>
       <p id="msgAccueil" class="message-attente" aria-live="polite"></p>
       <span id="infoPhoto" class="note"></span>
-      <div class="chips" id="suggestions" aria-label="Suggestions">
-        <button class="chip chip-verif" onclick="ouvrirLabo('ohm')"><svg class="ico" aria-hidden="true"><use href="#i-verifie"/></svg> Loi d'Ohm</button>
-        <button class="chip chip-verif" onclick="ouvrirLabo('refraction')"><svg class="ico" aria-hidden="true"><use href="#i-verifie"/></svg> Réfraction</button>
-        <button class="chip chip-verif" onclick="ouvrirLabo('cinetique')"><svg class="ico" aria-hidden="true"><use href="#i-verifie"/></svg> Cinétique</button>
-        <button class="chip" onclick="genererExperience('Chute libre')">Chute libre</button>
-        <button class="chip" onclick="genererExperience('Pendule simple')">Pendule simple</button>
-        <button class="chip" onclick="genererExperience('Photosynthèse')">Photosynthèse</button>
-        <button class="chip" onclick="genererExperience('Dosage acide-base')">Dosage acide-base</button>
-        <button class="chip" onclick="genererExperience('Osmose')">Osmose</button>
-        <button class="chip" onclick="genererExperience('Circuits en dérivation')">Circuits en dérivation</button>
-      </div>
+      <p class="exemples" id="suggestions">Essaie : <button class="lien-exemple" onclick="genererExperience('Chute libre')">la chute libre</button>, <button class="lien-exemple" onclick="genererExperience('Pendule simple')">le pendule</button>, <button class="lien-exemple" onclick="genererExperience('Photosynthèse')">la photosynthèse</button>, <button class="lien-exemple" onclick="genererExperience('Dosage acide-base')">le dosage acide-base</button></p>
     </div>
 
     <section class="section" id="choisir" aria-labelledby="titreChoisir">
@@ -506,17 +496,17 @@
       <p class="section-intro">Relues et testées par l'équipe. Pour tout autre sujet, l'IA crée une simulation sur mesure.</p>
       <div class="grille-exp" id="grilleExp">
         <button class="exp" onclick="ouvrirLabo('ohm')">
-          <span class="exp-haut"><span class="exp-icone exp-ohm"><svg class="ico" aria-hidden="true"><use href="#i-eclair"/></svg></span><span class="niveau">2nde et 1re</span></span>
+          <span class="exp-haut"><span class="exp-icone exp-ohm"><svg class="ico" aria-hidden="true"><use href="#i-eclair"/></svg></span></span>
           <h3>Loi d'Ohm</h3>
           <p>Tension, intensité et résistance dans un circuit.</p>
         </button>
         <button class="exp" onclick="ouvrirLabo('refraction')">
-          <span class="exp-haut"><span class="exp-icone exp-refraction"><svg class="ico" aria-hidden="true"><use href="#i-rayon"/></svg></span><span class="niveau">2nde et 1re</span></span>
+          <span class="exp-haut"><span class="exp-icone exp-refraction"><svg class="ico" aria-hidden="true"><use href="#i-rayon"/></svg></span></span>
           <h3>Réfraction de la lumière</h3>
           <p>Un rayon qui change de direction entre deux milieux.</p>
         </button>
         <button class="exp" onclick="ouvrirLabo('cinetique')">
-          <span class="exp-haut"><span class="exp-icone exp-cinetique"><svg class="ico" aria-hidden="true"><use href="#i-chrono"/></svg></span><span class="niveau">Terminale</span></span>
+          <span class="exp-haut"><span class="exp-icone exp-cinetique"><svg class="ico" aria-hidden="true"><use href="#i-chrono"/></svg></span></span>
           <h3>Cinétique chimique</h3>
           <p>L'effet de la température sur la vitesse d'une réaction.</p>
         </button>
@@ -537,10 +527,10 @@
   <section id="ecranAttente" class="cache" aria-live="polite">
     <div class="attente">
       <svg class="flacon" viewBox="0 0 48 48" aria-hidden="true">
-        <path d="M17.6 28 H30.4 L33.6 35 Q34.3 37.5 31.8 37.5 H16.2 Q13.7 37.5 14.4 35 Z" fill="#0F8A5F"/>
-        <circle class="bulle-anim b1" cx="21" cy="34" r="1.4" fill="#E3F4EC"/>
-        <circle class="bulle-anim b2" cx="26" cy="34" r="1.1" fill="#E3F4EC"/>
-        <circle class="bulle-anim b3" cx="23.5" cy="34" r="0.9" fill="#E3F4EC"/>
+        <path d="M17.6 28 H30.4 L33.6 35 Q34.3 37.5 31.8 37.5 H16.2 Q13.7 37.5 14.4 35 Z" fill="#1E2A5A"/>
+        <circle class="bulle-anim b1" cx="21" cy="34" r="1.4" fill="#FEF1E3"/>
+        <circle class="bulle-anim b2" cx="26" cy="34" r="1.1" fill="#FEF1E3"/>
+        <circle class="bulle-anim b3" cx="23.5" cy="34" r="0.9" fill="#FEF1E3"/>
         <path d="M21 12.5 V21 L14.4 35 Q13.7 37.5 16.2 37.5 H31.8 Q34.3 37.5 33.6 35 L27 21 V12.5" fill="none" stroke="#1B1F2A" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>
         <line x1="19" y1="12.5" x2="29" y2="12.5" stroke="#1B1F2A" stroke-width="2.2" stroke-linecap="round"/>
       </svg>
@@ -701,8 +691,8 @@ const VERIFIEES = ['ohm', 'refraction', 'cinetique'];
 let jetonTP = 0;                 // change à chaque TP : ignore les réponses IA d'un TP qu'on a quitté
 let profOccupe = false, rapportOccupe = false;
 
-const ENCRE = '#1B1F2A', PAPIER = '#FBFAF6', ORANGE = '#E8792B', BLEU = '#2563C9', VERT = '#0F8A5F';
-const COULEURS_SERIES = ['#2563C9', '#0F8A5F', '#E8792B', '#7C3AED', '#DB2777', '#0891B2'];
+const ENCRE = '#1B1F2A', PAPIER = '#FBFAF6', ORANGE = '#F28C1E', BLEU = '#2563C9', VERT = '#1E2A5A';
+const COULEURS_SERIES = ['#2563C9', '#1E2A5A', '#F28C1E', '#7C3AED', '#DB2777', '#0891B2'];
 const $ = id => document.getElementById(id);
 const fr = (x, d) => Number(x).toFixed(d).replace('.', ',');        // 6.5 -> "6,5"
 const echap = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -828,7 +818,7 @@ function afficherAccueil() {
   arreterAnimation(); arreterVoix(); finirVisite();
   if (document.body.classList.contains('mode-classe')) basculerModeClasse();
   montrerEcran('ecranAccueil');
-  document.title = 'LaboPoche | Le labo de sciences dans ta poche';
+  document.title = 'LaboPoche | Toute expérience, dans ta poche.';
   window.scrollTo(0, 0);
 }
 
@@ -1460,8 +1450,8 @@ const VISITES = {
   ],
   accueil: [
     { cible: '#recherche', titre: 'Dis ce que tu veux étudier', texte: "Écris un sujet, dicte-le avec le micro ou prends ta leçon en photo. Pour tout sujet de sciences, l'IA crée une simulation sur mesure." },
-    { cible: '#suggestions', titre: 'Ou touche une suggestion', texte: "Les sujets avec une coche sont des expériences vérifiées par l'équipe." },
-    { cible: '#grilleExp', titre: 'Les expériences vérifiées', texte: "Trois TP du programme, relus et testés. Le niveau scolaire est indiqué en bleu." }
+    { cible: '#suggestions', titre: 'Ou essaie un exemple', texte: "Touche un exemple pour ouvrir tout de suite une expérience prête à manipuler." },
+    { cible: '#grilleExp', titre: 'Les expériences vérifiées', texte: "Trois TP du programme, relus et testés." }
   ]
 };
 let visite = null;
