@@ -1706,6 +1706,8 @@ async function genererExperience(sujet, options) {
     ouvrirLabo('ia', def);
   } catch (e) {
     if (jeton !== jetonTP) return;
+    // Réponse de l'IA abîmée ou incomplète : une nouvelle tentative automatique avant d'afficher l'erreur
+    if (e.message === 'generation' && !options.reessaiAuto) { clearInterval(minuteur); genererExperience(sujet, { ...options, force: true, reessaiAuto: true }); return; }
     afficherErreurGeneration(e.message === 'generation'
       ? "L'IA n'a pas réussi à créer cette simulation. Réessaie, ou formule ton sujet autrement."
       : messageErreur(e.message));
