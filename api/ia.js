@@ -37,7 +37,7 @@ Réponds UNIQUEMENT en JSON valide, sans texte autour :
 Règles pour "colonnes" : 2 à 4 colonnes. D'abord les réglages des curseurs, puis les grandeurs mesurées.
 Règles pour "html" :
 - Document HTML autonome : <!DOCTYPE html>, CSS et JavaScript inline. AUCUNE ressource externe (pas de CDN, pas d'image distante, pas de police externe) et aucun appel réseau (pas de fetch, XMLHttpRequest, WebSocket).
-- Moins de 12 000 caractères. Code simple, robuste, sans erreur JavaScript.
+- Moins de 8 000 caractères : code court, simple, robuste, sans commentaires et sans erreur JavaScript.
 - Pleine largeur, lisible dès 320 px de large, sans défilement horizontal. body { margin: 0; padding: 12px; font-family: system-ui, sans-serif; background: #FBFAF6; color: #1B1F2A; }. Couleurs : vert #0F8A5F, orange #E8792B, bleu #2563C9.
 - Une simulation visuelle, animée ou qui réagit tout de suite aux réglages, dans un <svg viewBox="..."> en width 100 %, ou dans un <canvas> dont la taille suit la largeur de la fenêtre.
 - 1 à 3 curseurs <input type="range"> en width 100 %, chacun avec son nom, sa valeur et son unité affichés. Éventuellement un bouton (ex : Lâcher, Lancer, Recommencer). Aucun autre contrôle.
@@ -106,7 +106,12 @@ module.exports = async (req, res) => {
       generationConfig: { temperature: mode === 'comprendre' ? 0.2 : 0.5 }
     };
     if (mode === 'comprendre' || mode === 'generer') corps.generationConfig.responseMimeType = 'application/json';
-    if (mode === 'generer') { corps.generationConfig.temperature = 0.4; corps.generationConfig.maxOutputTokens = 16384; }
+    // Génération : on coupe la « réflexion » du modèle, sinon il dépasse le temps limite
+    if (mode === 'generer') {
+      corps.generationConfig.temperature = 0.4;
+      corps.generationConfig.maxOutputTokens = 12000;
+      corps.generationConfig.thinkingConfig = { thinkingBudget: 0 };
+    }
 
     // Si le modèle est surchargé (erreurs 429, 500, 503) ou ne répond pas
     // à temps, on passe au modèle de secours suivant.
@@ -126,6 +131,13 @@ module.exports = async (req, res) => {
           signal: AbortSignal.timeout(mode === 'generer' ? reste : Math.min(15000, reste))
         });
         data = await r.json();
+        // Certains modèles refusent de couper la réflexion : on réessaie le même modèle sans ce réglage
+        if (r.status === 400 && corps.generationConfig.thinkingConfig) {
+          delete corps.generationConfig.thinkingConfig;
+          i--;
+          continue;
+        }
+        res.setHeader('x-labopoche-modele', modeles[i]);
         if (r.ok || ![429, 500, 503].includes(r.status)) break;
       } catch (e) {
         r = null; // délai dépassé : on essaie le modèle suivant
