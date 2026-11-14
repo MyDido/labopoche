@@ -9,15 +9,47 @@ Choisis UNE expérience parmi :
 - "ohm" : loi d'Ohm, tension, intensité, résistance, circuit électrique
 - "refraction" : réfraction de la lumière, indice de réfraction, loi de Snell-Descartes, réflexion totale
 - "cinetique" : cinétique chimique, vitesse de réaction, temps de demi-réaction, influence de la température ou de la concentration, hydrolyse du chlorure de tertiobutyle
-Si aucune ne correspond, choisis "aucune".
+Si aucune ne correspond, choisis "aucune" : une simulation sera alors créée sur mesure pour le sujet.
 Réponds UNIQUEMENT en JSON valide, sans texte autour :
 {
   "experience": "ohm" | "refraction" | "cinetique" | "aucune",
+  "sujet": "nom court du sujet scientifique demandé (ex : Chute libre, Pendule simple, Photosynthèse)",
+  "scientifique": true si la demande porte sur les sciences (physique, chimie, SVT, niveau lycée ou université), sinon false,
   "titre": "titre court du TP",
   "objectif": "ce que l'élève va découvrir, en une phrase simple",
   "question_prediction": "une question qui demande à l'élève de prédire le résultat AVANT de manipuler",
-  "message_si_aucune": "si aucune expérience ne correspond, explique gentiment lesquelles sont disponibles, sinon chaîne vide"
+  "message_si_aucune": "si la demande n'est pas scientifique, explique gentiment que LaboPoche fait des expériences de sciences, sinon chaîne vide"
 }`,
+
+  generer: `Tu es l'ingénieur pédagogique de LaboPoche, un laboratoire virtuel de sciences pour lycéens et étudiants africains.
+Crée une simulation interactive pour le sujet donné (physique, chimie, SVT, niveau lycée ou université).
+Réponds UNIQUEMENT en JSON valide, sans texte autour :
+{
+  "titre": "titre court de l'expérience",
+  "objectif": "ce que l'élève va découvrir, en une phrase simple",
+  "explication": ["2 ou 3 phrases simples qui expliquent le phénomène"],
+  "formule": "la loi principale en texte clair, sans LaTeX (ex : T = 2π × √(L / g))",
+  "question_prediction": "une question qui demande à l'élève de prédire le résultat AVANT de manipuler",
+  "colonnes": ["noms des grandeurs avec leur unité, ex : L (m)", "T (s)"],
+  "graphe": { "x": "une des colonnes (une grandeur réglée)", "y": "une des colonnes (une grandeur mesurée)" },
+  "html": "le document HTML complet de la simulation"
+}
+Règles pour "colonnes" : 2 à 4 colonnes. D'abord les réglages des curseurs, puis les grandeurs mesurées.
+Règles pour "html" :
+- Document HTML autonome : <!DOCTYPE html>, CSS et JavaScript inline. AUCUNE ressource externe (pas de CDN, pas d'image distante, pas de police externe) et aucun appel réseau (pas de fetch, XMLHttpRequest, WebSocket).
+- Moins de 12 000 caractères. Code simple, robuste, sans erreur JavaScript.
+- Pleine largeur, lisible dès 320 px de large, sans défilement horizontal. body { margin: 0; padding: 12px; font-family: system-ui, sans-serif; background: #FBFAF6; color: #1B1F2A; }. Couleurs : vert #0F8A5F, orange #E8792B, bleu #2563C9.
+- Une simulation visuelle, animée ou qui réagit tout de suite aux réglages, dans un <svg viewBox="..."> en width 100 %, ou dans un <canvas> dont la taille suit la largeur de la fenêtre.
+- 1 à 3 curseurs <input type="range"> en width 100 %, chacun avec son nom, sa valeur et son unité affichés. Éventuellement un bouton (ex : Lâcher, Lancer, Recommencer). Aucun autre contrôle.
+- Un afficheur des grandeurs mesurées : police monospace, fond #1B1F2A, texte #7CFFB2, coins arrondis.
+- Calculs fidèles aux lois scientifiques : vraies formules, vraies constantes, unités SI. Si c'est un modèle simplifié, écris « Modèle simplifié » en petit sous la simulation.
+- À chaque changement, et une première fois dès le chargement, appelle :
+  window.parent.postMessage({ type: 'labopoche-etat', valeurs: {...}, mesures: {...} }, '*')
+  "valeurs" contient les réglages des curseurs, "mesures" les grandeurs mesurées ou calculées. Leurs clés sont EXACTEMENT les textes de "colonnes" et leurs valeurs sont des nombres (3 chiffres significatifs). Pendant une animation, envoie l'état au plus 10 fois par seconde.
+- Pas de tableau de mesures ni de bouton « Mesurer » : la page LaboPoche les gère.
+- Pas de alert, prompt, confirm, localStorage, ni de lien.
+Pour la chimie et la SVT, simule le phénomène de façon quantitative (ex : photosynthèse : intensité lumineuse et CO2 donnent le volume d'O2 dégagé ; dosage acide-base : volume versé donne le pH ; osmose : concentrations donnent le sens et le volume d'eau qui passe).
+Si la demande n'est pas un sujet de sciences, mets "html" à "" et explique pourquoi dans "objectif".`,
 
   prof: `Tu es un professeur de TP de physique-chimie bienveillant pour des lycéens togolais.
 Tu reçois : l'expérience en cours, l'état actuel de la simulation (valeurs des curseurs et mesures) et le message de l'élève.
@@ -73,20 +105,25 @@ module.exports = async (req, res) => {
       contents: [{ role: 'user', parts }],
       generationConfig: { temperature: mode === 'comprendre' ? 0.2 : 0.5 }
     };
-    if (mode === 'comprendre') corps.generationConfig.responseMimeType = 'application/json';
+    if (mode === 'comprendre' || mode === 'generer') corps.generationConfig.responseMimeType = 'application/json';
+    if (mode === 'generer') { corps.generationConfig.temperature = 0.4; corps.generationConfig.maxOutputTokens = 16384; }
 
     // Si le modèle est surchargé (erreurs 429, 500, 503) ou ne répond pas
-    // en 15 secondes, on passe au modèle de secours suivant.
+    // à temps, on passe au modèle de secours suivant.
+    // La génération d'une simulation est longue : 50 s au total pour ce mode, 15 s par essai pour les autres.
     const modeles = [modele, 'gemini-flash-lite-latest', 'gemini-flash-latest'];
+    const finLimite = Date.now() + (mode === 'generer' ? 50000 : 45000);
     let r = null, data = null;
     for (let i = 0; i < modeles.length; i++) {
+      const reste = finLimite - Date.now();
+      if (reste < 3000) break;
       const url = `https://generativelanguage.googleapis.com/v1beta/models/${modeles[i]}:generateContent`;
       try {
         r = await fetch(url, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'x-goog-api-key': cle },
           body: JSON.stringify(corps),
-          signal: AbortSignal.timeout(15000)
+          signal: AbortSignal.timeout(mode === 'generer' ? reste : Math.min(15000, reste))
         });
         data = await r.json();
         if (r.ok || ![429, 500, 503].includes(r.status)) break;
