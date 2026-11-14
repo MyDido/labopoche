@@ -32,7 +32,7 @@ Règles absolues :
 Lois de référence (ne les contredis jamais) :
 - Loi d'Ohm : U = R x I. À résistance constante, l'intensité est proportionnelle à la tension : si U double, I double. À tension constante, si R double, I est divisée par deux.
 - Réfraction : n1 x sin(i1) = n2 x sin(i2). En passant dans un milieu plus réfringent, le rayon se rapproche de la normale. Réflexion totale possible seulement du milieu le plus réfringent vers le moins réfringent, au-delà de l'angle limite.
-- Cinétique : la vitesse de réaction augmente avec la température et avec la concentration des réactifs ; le temps de demi-réaction diminue alors.`,
+- Cinétique : la vitesse de réaction augmente avec la température, et le temps de demi-réaction diminue alors. Une concentration initiale plus grande augmente la vitesse initiale et la conductivité finale, mais pour cette réaction d'ordre 1 le temps de demi-réaction ne dépend pas de la concentration.`,
 
   rapport: `À partir de l'expérience et du tableau de mesures fourni, rédige un compte rendu de TP de niveau lycée, en français.
 Structure exacte, avec ces titres en markdown (##) : Objectif, Matériel (virtuel), Protocole, Tableau de mesures, Exploitation des résultats, Conclusion.

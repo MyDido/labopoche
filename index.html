@@ -3,186 +3,625 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LaboPoche — le labo de sciences dans ta poche</title>
+<title>LaboPoche — Le labo de sciences dans ta poche</title>
+<meta name="description" content="LaboPoche : un laboratoire virtuel de physique-chimie pour les lycéens. Prédis, manipule une simulation, et un professeur IA t'aide à comprendre jusqu'au compte rendu de TP.">
+<meta name="theme-color" content="#F6F4EE">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="LaboPoche">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:title" content="LaboPoche — Le labo de sciences dans ta poche">
+<meta property="og:description" content="Fais de vraies expériences de physique-chimie sur ton téléphone, même sans laboratoire : loi d'Ohm, réfraction, cinétique chimique, avec un professeur IA.">
+<meta property="og:url" content="https://labopoche.vercel.app/">
+<meta property="og:image" content="https://labopoche.vercel.app/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/logo.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
+  /* =========================================================
+     CHARTE GRAPHIQUE (variables CSS)
+     ========================================================= */
   :root {
-    --fond: #f6f4ee; --carte: #ffffff; --encre: #1b1f2a; --doux: #5b6272;
-    --vert: #0f8a5f; --vert-clair: #e3f4ec; --orange: #e8792b; --bleu: #2563c9;
-    --bord: #e2ded3; --rayon: 16px;
+    --vert: #0F8A5F; --vert-fonce: #0B7A53; --vert-clair: #E3F4EC;
+    --orange: #E8792B; --orange-clair: #FDF0E6;
+    --encre: #1B1F2A; --doux: #5B6272;
+    --fond: #F6F4EE; --carte: #FFFFFF; --bord: #E2DED3;
+    --bleu: #2563C9; --bleu-clair: #E8EEFC;
+    --rayon: 16px;
+    --ombre: 0 1px 2px rgba(27, 31, 42, .04), 0 4px 16px rgba(27, 31, 42, .05);
+    --police-titres: 'Sora', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --police-texte: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    color-scheme: light;
   }
   * { box-sizing: border-box; }
-  body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background: var(--fond); color: var(--encre); }
-  header { background: var(--encre); color: #fff; padding: 14px 18px; display: flex; align-items: center; gap: 10px; }
-  header h1 { margin: 0; font-size: 20px; cursor: pointer; }
-  header .tag { font-size: 12px; opacity: .7; }
-  header button { margin-left: auto; background: transparent; color: #fff; border: 1px solid #fff5; border-radius: 10px; padding: 6px 10px; font-size: 13px; }
-  main { max-width: 980px; margin: 0 auto; padding: 16px; }
-  .carte { background: var(--carte); border: 1px solid var(--bord); border-radius: var(--rayon); padding: 16px; margin-bottom: 14px; }
-  h2 { margin: 0 0 8px; font-size: 20px; }
-  p.doux { color: var(--doux); margin: 4px 0 12px; }
+  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+  body { margin: 0; font-family: var(--police-texte); font-size: 16px; line-height: 1.55; background: var(--fond); color: var(--encre); overflow-x: hidden; }
+  h1, h2, h3 { font-family: var(--police-titres); line-height: 1.2; letter-spacing: -.01em; margin: 0 0 .5em; }
+  img, svg, canvas { max-width: 100%; }
+  a { color: var(--vert-fonce); }
   button { font: inherit; cursor: pointer; }
-  .btn { background: var(--vert); color: #fff; border: 0; border-radius: 12px; padding: 12px 16px; font-weight: 600; }
-  .btn.secondaire { background: var(--vert-clair); color: var(--vert); }
-  .btn.orange { background: var(--orange); }
-  .btn:disabled { opacity: .5; cursor: wait; }
-  .rangee { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
-  input[type=text], textarea, select { font: inherit; padding: 12px; border: 1px solid var(--bord); border-radius: 12px; width: 100%; background: #fff; }
-  .micro { width: 64px; height: 64px; border-radius: 50%; border: 0; background: var(--orange); color: #fff; font-size: 28px; flex: none; }
-  .micro.ecoute { animation: pulse 1s infinite; }
-  @keyframes pulse { 50% { box-shadow: 0 0 0 12px #e8792b33; } }
-  .grille3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
-  .exp { text-align: left; background: var(--carte); border: 1px solid var(--bord); border-radius: var(--rayon); padding: 14px; }
-  .exp b { display: block; font-size: 16px; margin-bottom: 4px; }
-  .exp span { color: var(--doux); font-size: 14px; }
+  :focus-visible { outline: 3px solid var(--bleu); outline-offset: 2px; border-radius: 6px; }
   .cache { display: none !important; }
-  .labo { display: grid; grid-template-columns: 1.3fr 1fr; gap: 14px; }
-  @media (max-width: 800px) { .labo { grid-template-columns: 1fr; } }
-  canvas.sim, svg.sim { width: 100%; background: #fbfaf6; border-radius: 12px; border: 1px solid var(--bord); }
-  .curseur { margin: 12px 0; }
-  .curseur label { display: flex; justify-content: space-between; font-weight: 600; font-size: 15px; }
-  .curseur input { width: 100%; accent-color: var(--vert); }
-  .afficheur { font-family: ui-monospace, monospace; font-size: 22px; background: var(--encre); color: #7CFFB2; padding: 8px 12px; border-radius: 10px; display: inline-block; }
-  table { width: 100%; border-collapse: collapse; font-size: 14px; }
-  th, td { border-bottom: 1px solid var(--bord); padding: 6px; text-align: center; }
-  .chat { max-height: 320px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
-  .bulle { padding: 10px 12px; border-radius: 14px; max-width: 92%; line-height: 1.4; font-size: 15px; }
-  .bulle.prof { background: var(--vert-clair); align-self: flex-start; }
-  .bulle.eleve { background: #e8eefc; align-self: flex-end; }
-  .badge { display: inline-block; font-size: 12px; background: #fff3e6; color: var(--orange); padding: 3px 8px; border-radius: 99px; font-weight: 600; }
-  .rapport { line-height: 1.55; }
-  .rapport table { margin: 8px 0; }
-  .note { font-size: 12px; color: var(--doux); }
-  .chargement { color: var(--doux); font-style: italic; }
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+  .lien-evitement { position: absolute; left: -9999px; top: 8px; z-index: 100; background: #fff; padding: 10px 14px; border-radius: 10px; }
+  .lien-evitement:focus { left: 8px; }
+
+  /* ---------- En-tête ---------- */
+  .entete { background: var(--carte); border-bottom: 1px solid var(--bord); padding: 10px 16px; display: flex; align-items: center; gap: 12px; }
+  .marque { display: flex; align-items: center; gap: 10px; min-height: 44px; min-width: 0; color: var(--encre); text-decoration: none; }
+  .logo { width: 38px; height: 38px; flex: none; }
+  .nom { font-family: var(--police-titres); font-weight: 700; font-size: 21px; letter-spacing: -.02em; white-space: nowrap; }
+  .poche { color: var(--vert); }
+  .slogan { font-size: 13px; color: var(--doux); border-left: 1px solid var(--bord); padding-left: 12px; white-space: nowrap; }
+  @media (max-width: 640px) { .slogan { display: none; } }
+  .actions-entete { margin-left: auto; display: flex; gap: 8px; flex: none; }
+  .btn-entete { min-height: 44px; min-width: 44px; padding: 0 12px; border: 1px solid var(--bord); background: #fff; color: var(--encre); border-radius: 12px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; gap: 6px; transition: background .18s; }
+  .btn-entete:hover { background: var(--fond); }
+  .bandeau { background: var(--orange-clair); color: var(--encre); text-align: center; font-size: 14px; padding: 10px 16px; border-bottom: 1px solid var(--bord); }
+
+  main { max-width: 1080px; margin: 0 auto; padding: 20px 16px 32px; }
+
+  /* ---------- Boutons ---------- */
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 10px 18px; border-radius: 12px; border: 1px solid transparent; background: var(--vert-fonce); color: #fff; font-weight: 600; font-size: 16px; text-decoration: none; text-align: center; transition: background .18s, transform .18s, box-shadow .18s; }
+  .btn:hover { background: #096846; }
+  .btn:active { transform: translateY(1px); }
+  .btn-secondaire { background: var(--vert-clair); color: var(--vert-fonce); }
+  .btn-secondaire:hover { background: #D3ECDF; }
+  .btn-orange { background: var(--orange); color: var(--encre); }
+  .btn-orange:hover { background: #F08A40; }
+  .btn-contour { background: #fff; color: var(--encre); border-color: var(--bord); }
+  .btn-contour:hover { background: var(--fond); }
+  .btn-plein { width: 100%; }
+  .btn-grand { min-height: 54px; padding: 12px 24px; font-size: 17px; }
+  .btn:disabled { opacity: .55; cursor: progress; }
+
+  /* ---------- Cartes et textes ---------- */
+  .carte { background: var(--carte); border: 1px solid var(--bord); border-radius: var(--rayon); padding: 18px; box-shadow: var(--ombre); }
+  .carte-tete { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+  .carte-tete h3 { margin: 0; font-size: 18px; }
+  .doux { color: var(--doux); }
+  .note { font-size: 13px; color: var(--doux); }
+  .aide { font-size: 14px; color: var(--doux); margin: 6px 0 10px; }
+  .alerte { background: var(--orange-clair); border-radius: 12px; padding: 12px 14px; margin: 12px 0 0; font-size: 15px; }
+  .message-attente { color: var(--doux); font-size: 15px; margin: 12px 0 0; min-height: 1.5em; }
+
+  /* ---------- Accueil ---------- */
+  .hero { display: grid; gap: 32px; align-items: center; padding: 20px 0 8px; }
+  @media (min-width: 860px) { .hero { grid-template-columns: 1.45fr 1fr; padding-top: 36px; } }
+  .surtitre { display: inline-block; font-size: 13px; font-weight: 600; color: var(--vert-fonce); background: var(--vert-clair); padding: 6px 12px; border-radius: 99px; margin: 0 0 14px; }
+  .hero h1 { font-size: clamp(28px, 7vw, 48px); font-weight: 700; margin-bottom: 14px; }
+  .hero h1 em { font-style: normal; color: var(--vert); }
+  .hero-sous { font-size: clamp(16px, 2.2vw, 19px); color: var(--doux); max-width: 56ch; margin: 0 0 22px; }
+  .hero-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+  @media (max-width: 480px) { .hero-actions .btn { width: 100%; } }
+  .puces { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; padding: 0; margin: 22px 0 0; }
+  .puces li { background: #fff; border: 1px solid var(--bord); border-radius: 99px; padding: 6px 12px; font-size: 14px; }
+  .hero-visuel { display: none; position: relative; aspect-ratio: 1; max-width: 380px; width: 100%; justify-self: center; border-radius: 50%; background: radial-gradient(circle at 50% 45%, #fff 0 38%, var(--vert-clair) 39% 100%); }
+  @media (min-width: 860px) { .hero-visuel { display: grid; place-items: center; } }
+  .hero-visuel .logo-grand { width: 46%; height: 46%; }
+  .mini { position: absolute; background: #fff; border: 1px solid var(--bord); border-radius: 14px; padding: 10px 14px; box-shadow: var(--ombre); font-size: 14px; max-width: 230px; }
+  .mini-afficheur { top: 10%; right: -4%; font-family: ui-monospace, Consolas, monospace; background: var(--encre); color: #7CFFB2; border: 0; font-size: 16px; }
+  .mini-bulle { bottom: 8%; left: -8%; background: var(--vert-clair); }
+
+  .section { margin-top: 48px; scroll-margin-top: 16px; }
+  .section > h2 { font-size: clamp(22px, 4.5vw, 30px); }
+  .section-intro { color: var(--doux); margin: -4px 0 18px; max-width: 60ch; }
+
+  .etapes-cm { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
+  .etape-cm { display: flex; gap: 14px; align-items: flex-start; }
+  .etape-cm h3 { font-size: 17px; margin-bottom: 4px; }
+  .etape-cm p { margin: 0; color: var(--doux); font-size: 15px; }
+  .icone-etape { flex: none; width: 48px; height: 48px; border-radius: 14px; display: grid; place-items: center; background: var(--vert-clair); color: var(--vert-fonce); }
+  .icone-etape svg { width: 26px; height: 26px; }
+  .etape-cm:nth-child(2) .icone-etape { background: var(--bleu-clair); color: var(--bleu); }
+  .etape-cm:nth-child(3) .icone-etape { background: var(--orange-clair); color: #A9500F; }
+
+  .grille-exp { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+  .exp { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; width: 100%; text-align: left; color: inherit; background: var(--carte); border: 1px solid var(--bord); border-radius: var(--rayon); padding: 18px; box-shadow: var(--ombre); transition: transform .18s, box-shadow .18s, border-color .18s; }
+  .exp:hover { transform: translateY(-2px); border-color: var(--vert); box-shadow: 0 8px 24px rgba(27, 31, 42, .08); }
+  .exp-haut { display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 8px; }
+  .exp-icone { width: 52px; height: 52px; border-radius: 14px; display: grid; place-items: center; font-size: 28px; background: var(--fond); }
+  .niveau { font-size: 12px; font-weight: 600; color: var(--bleu); background: var(--bleu-clair); padding: 4px 10px; border-radius: 99px; }
+  .exp h3 { margin: 0; font-size: 18px; }
+  .exp p { margin: 0; color: var(--doux); font-size: 15px; }
+  .exp .aller { margin-top: auto; font-weight: 600; color: var(--vert-fonce); }
+
+  #carteDemande { margin-top: 16px; }
+  #carteDemande h3 { font-size: 18px; margin-bottom: 4px; }
+  .saisie { display: flex; gap: 10px; align-items: center; }
+  input[type=text], select { flex: 1; min-width: 0; width: 100%; min-height: 48px; font: inherit; font-size: 16px; padding: 10px 14px; border: 1px solid var(--bord); border-radius: 12px; background: #fff; color: var(--encre); }
+  input[type=text]:focus, select:focus { border-color: var(--vert); outline: none; box-shadow: 0 0 0 3px rgba(15, 138, 95, .18); }
+  .micro { width: 56px; height: 56px; border-radius: 50%; border: 0; background: var(--orange); color: var(--encre); font-size: 24px; flex: none; display: grid; place-items: center; transition: background .18s; }
+  .micro.ecoute { background: #C2410C; color: #fff; animation: pulse 1.2s infinite; }
+  .micro.indispo { background: #ECE9E1; color: #8A909C; cursor: not-allowed; }
+  @keyframes pulse { 50% { box-shadow: 0 0 0 12px rgba(232, 121, 43, .2); } }
+  .statut-micro { font-size: 13px; color: var(--doux); margin: 6px 0 0; min-height: 1.2em; }
+  .ligne-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; align-items: center; }
+  .btn-photo { position: relative; }
+  .btn-photo:focus-within { outline: 3px solid var(--bleu); outline-offset: 2px; }
+
+  .apropos { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); }
+  .apropos h3 { font-size: 18px; }
+  .apropos p { margin: 0; color: var(--doux); }
+  .sources { margin: 0; padding-left: 18px; }
+  .sources li { margin-bottom: 4px; overflow-wrap: anywhere; }
+  .sources a { display: inline-block; padding: 11px 0; }
+
+  /* ---------- Pied de page ---------- */
+  .pied { background: var(--carte); border-top: 1px solid var(--bord); margin-top: 56px; padding: 28px 16px 32px; font-size: 14px; color: var(--doux); }
+  .pied-int { max-width: 1080px; margin: 0 auto; display: grid; gap: 6px; }
+  .pied-marque { display: flex; align-items: center; gap: 10px; color: var(--encre); font-weight: 600; margin-bottom: 6px; }
+  .pied-marque .logo { width: 30px; height: 30px; }
+  .pied p { margin: 0; }
+
+  /* ---------- Écran d'expérience ---------- */
+  .barre-labo { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
+  .titre-tp { font-size: clamp(24px, 5vw, 34px); margin: 0 0 4px; }
+  #objectifTP { margin: 0; }
+  details.explication { margin: 16px 0 18px; padding: 0; }
+  details.explication summary { list-style: none; cursor: pointer; min-height: 52px; display: flex; align-items: center; gap: 10px; padding: 12px 18px; font-family: var(--police-titres); font-weight: 600; }
+  details.explication summary::-webkit-details-marker { display: none; }
+  details.explication summary::after { content: '+'; margin-left: auto; font-size: 24px; line-height: 1; color: var(--vert-fonce); }
+  details.explication[open] summary::after { content: '−'; }
+  .explication-corps { padding: 0 18px 18px; }
+  .explication-corps p { margin: 0 0 10px; }
+  .formule { font-family: ui-monospace, Consolas, Menlo, monospace; background: var(--vert-clair); color: var(--vert-fonce); padding: 12px 14px; border-radius: 12px; font-weight: 600; overflow-wrap: anywhere; }
+
+  .labo { display: grid; gap: 16px; align-items: start; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); grid-template-areas: "sim prof" "mesures rapport"; }
+  #carteSim { grid-area: sim; } #carteMesures { grid-area: mesures; } #carteProf { grid-area: prof; } #carteRapport { grid-area: rapport; }
+  @media (max-width: 860px) { .labo { grid-template-columns: minmax(0, 1fr); grid-template-areas: "prof" "sim" "mesures" "rapport"; } }
+
+  canvas.sim { display: block; width: 100%; height: auto; background: #FBFAF6; border: 1px solid var(--bord); border-radius: 12px; }
+  .zone-afficheur { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin: 12px 0 4px; }
+  .afficheur { display: inline-block; max-width: 100%; font-family: ui-monospace, Consolas, Menlo, monospace; font-size: clamp(18px, 4.5vw, 24px); font-variant-numeric: tabular-nums; background: var(--encre); color: #7CFFB2; padding: 8px 14px; border-radius: 10px; overflow-wrap: anywhere; }
+  .curseur { margin-top: 14px; }
+  .curseur-tete { display: flex; align-items: center; gap: 6px; }
+  .curseur-tete label { font-weight: 600; }
+  .valeur { margin-left: auto; font-weight: 600; color: var(--bleu); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .btn-info { width: 44px; height: 44px; flex: none; border: 0; border-radius: 50%; background: transparent; color: var(--bleu); font-size: 20px; display: grid; place-items: center; margin-right: -8px; }
+  .btn-info[aria-expanded=true] { background: var(--bleu-clair); }
+  .info-curseur { background: var(--bleu-clair); color: #1D3F80; border-radius: 12px; padding: 10px 12px; font-size: 14px; margin: 4px 0; }
+  .actions-sim { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 12px; }
+
+  /* Curseurs tactiles : piste de 8 px, poignée de 26 px, zone de 44 px */
+  input[type=range] { -webkit-appearance: none; appearance: none; width: 100%; height: 44px; background: transparent; margin: 0; --pct: 50%; }
+  input[type=range]::-webkit-slider-runnable-track { height: 8px; border-radius: 99px; background: linear-gradient(to right, var(--vert) var(--pct), var(--bord) var(--pct)); }
+  input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 26px; height: 26px; margin-top: -9px; border-radius: 50%; background: #fff; border: 3px solid var(--vert); box-shadow: 0 1px 4px rgba(0, 0, 0, .2); }
+  input[type=range]::-moz-range-track { height: 8px; border-radius: 99px; background: var(--bord); }
+  input[type=range]::-moz-range-progress { height: 8px; border-radius: 99px; background: var(--vert); }
+  input[type=range]::-moz-range-thumb { width: 22px; height: 22px; border-radius: 50%; background: #fff; border: 3px solid var(--vert); }
+
+  .table-defile { overflow: auto; max-height: 280px; border: 1px solid var(--bord); border-radius: 12px; -webkit-overflow-scrolling: touch; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; font-variant-numeric: tabular-nums; }
+  th, td { padding: 8px 10px; text-align: center; border-bottom: 1px solid var(--bord); }
+  thead th { position: sticky; top: 0; background: var(--fond); color: var(--doux); font-size: 13px; font-weight: 600; white-space: nowrap; }
+  tbody tr:last-child td { border-bottom: 0; }
+  td.vide { padding: 18px; color: var(--doux); }
+  tr.nouvelle td { animation: surligne 1.2s ease-out; }
+  @keyframes surligne { from { background: var(--vert-clair); } to { background: transparent; } }
+  .graphe-boite { position: relative; height: 260px; margin-top: 14px; }
+  .graphe-vide { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; padding: 16px; font-size: 14px; color: var(--doux); background: #FBFAF6; border: 1px dashed var(--bord); border-radius: 12px; }
+  .lecture { margin-top: 12px; background: var(--fond); border-radius: 12px; padding: 12px 14px; font-size: 14px; }
+  .lecture b { display: block; font-family: var(--police-titres); margin-bottom: 4px; }
+  .lecture p { margin: 0; color: var(--doux); }
+
+  .prof-titre { display: flex; align-items: center; gap: 10px; }
+  .avatar { display: inline-grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; background: var(--vert-clair); font-size: 22px; flex: none; }
+  .avatar.parle { animation: parle 1s ease-in-out infinite; }
+  @keyframes parle { 50% { box-shadow: 0 0 0 7px rgba(15, 138, 95, .2); } }
+  .etat-prof { display: block; font-size: 13px; font-weight: 500; color: var(--vert-fonce); font-family: var(--police-texte); min-height: 1.2em; }
+  .etapes { list-style: none; padding: 0; margin: 0 0 14px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; counter-reset: etape; }
+  .etapes li { counter-increment: etape; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 4px; border-radius: 10px; background: var(--fond); color: var(--doux); text-align: center; font-size: 12.5px; line-height: 1.25; font-weight: 500; transition: background .2s, color .2s; }
+  .etapes li::before { content: counter(etape); display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: #fff; border: 1px solid var(--bord); font-weight: 700; font-size: 12px; }
+  .etapes li.active { background: var(--orange-clair); color: var(--encre); font-weight: 600; }
+  .etapes li.active::before { background: var(--orange); border-color: var(--orange); color: var(--encre); }
+  .etapes li.faite { background: var(--vert-clair); color: var(--vert-fonce); }
+  .etapes li.faite::before { content: '✓'; background: var(--vert-fonce); border-color: var(--vert-fonce); color: #fff; }
+
+  .chat { display: flex; flex-direction: column; gap: 10px; min-height: 120px; max-height: 340px; overflow-y: auto; padding: 2px 2px 8px; }
+  .bulle { max-width: 92%; padding: 12px 14px; border-radius: 16px; font-size: 15px; line-height: 1.5; animation: apparait .2s ease-out; }
+  .bulle p { margin: 0; }
+  .bulle.prof { align-self: flex-start; background: var(--vert-clair); border-bottom-left-radius: 6px; }
+  .bulle.eleve { align-self: flex-end; background: var(--bleu-clair); border-bottom-right-radius: 6px; }
+  .bulle.erreur { background: var(--orange-clair); }
+  .bulle .mini-btn { display: inline-flex; align-items: center; gap: 4px; min-height: 44px; margin: 2px 0 -10px -6px; padding: 0 6px; border: 0; background: transparent; color: var(--vert-fonce); font-weight: 600; font-size: 13px; }
+  .bulle.erreur .mini-btn { color: #A9500F; }
+  @keyframes apparait { from { opacity: 0; transform: translateY(4px); } }
+  .points i { display: inline-block; width: 6px; height: 6px; margin-left: 3px; border-radius: 50%; background: currentColor; animation: point 1.2s infinite; }
+  .points i:nth-child(2) { animation-delay: .15s; } .points i:nth-child(3) { animation-delay: .3s; }
+  @keyframes point { 0%, 80%, 100% { opacity: .25; transform: translateY(0); } 40% { opacity: 1; transform: translateY(-3px); } }
+  .barre-voix { display: flex; gap: 8px; align-items: center; justify-content: space-between; flex-wrap: wrap; margin: 4px 0 6px; }
+  .btn-lien { min-height: 44px; padding: 0 6px; border: 0; background: transparent; color: var(--vert-fonce); font-weight: 600; font-size: 14px; }
+  .btn-lien:disabled { color: #9AA0AD; cursor: default; }
+  .btn-stop { min-height: 44px; padding: 0 16px; border: 0; border-radius: 99px; background: var(--encre); color: #fff; font-weight: 600; font-size: 14px; }
+  #btnProf { margin-top: 10px; }
+
+  .feuille { margin-top: 16px; padding: 20px; background: #fff; border: 1px solid var(--bord); border-radius: 12px; line-height: 1.6; }
+  .feuille-tete { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding-bottom: 10px; margin-bottom: 14px; border-bottom: 2px solid var(--vert); }
+  .feuille-tete .logo { width: 30px; height: 30px; }
+  .feuille-tete .t { font-family: var(--police-titres); font-weight: 700; }
+  .feuille-tete .date { margin-left: auto; font-size: 13px; color: var(--doux); }
+  .feuille h2 { font-size: 22px; }
+  .feuille h3 { font-size: 17px; color: var(--vert-fonce); margin: 18px 0 6px; }
+  .feuille p { margin: 0 0 8px; }
+  .feuille ul { margin: 0 0 8px; padding-left: 20px; }
+  .feuille figure { margin: 16px 0 8px; }
+  .feuille figcaption { font-weight: 600; margin-bottom: 6px; }
+  .feuille figure img { width: 100%; max-width: 560px; border: 1px solid var(--bord); border-radius: 8px; }
+  .feuille .table-defile { max-height: none; margin: 8px 0 12px; }
+  .feuille-eleve { display: none; }
+
+  /* ---------- Visite guidée ---------- */
+  .visite { position: fixed; left: 12px; right: 12px; bottom: 12px; z-index: 70; max-width: 440px; margin: 0 auto; background: #fff; border: 1px solid var(--bord); border-radius: 18px; padding: 18px; box-shadow: 0 12px 40px rgba(27, 31, 42, .25); animation: apparait .2s ease-out; }
+  .visite-compteur { margin: 0 0 4px; font-size: 12px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--vert-fonce); }
+  .visite h3 { font-size: 18px; margin-bottom: 6px; }
+  .visite p { margin: 0 0 14px; color: var(--doux); }
+  .visite .ligne-actions { justify-content: flex-end; margin: 0; }
+  .visite-cible { position: relative; z-index: 60; box-shadow: 0 0 0 4px var(--orange), 0 0 0 100vmax rgba(27, 31, 42, .55) !important; border-radius: var(--rayon); scroll-margin-top: 16px; }
+
+  /* ---------- Mode classe (projection au tableau) ---------- */
+  .quitter-classe { display: none; }
+  body.mode-classe .quitter-classe { display: inline-flex; position: fixed; top: 12px; right: 12px; z-index: 80; }
+  body.mode-classe .entete, body.mode-classe .pied, body.mode-classe .bandeau, body.mode-classe .barre-labo,
+  body.mode-classe #objectifTP, body.mode-classe #explication, body.mode-classe #carteProf,
+  body.mode-classe #carteRapport, body.mode-classe .lecture, body.mode-classe .aide { display: none !important; }
+  body.mode-classe main { max-width: none; padding: 68px 20px 20px; }
+  body.mode-classe .labo { grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); grid-template-areas: "sim mesures"; }
+  @media (max-width: 860px) { body.mode-classe .labo { grid-template-columns: minmax(0, 1fr); grid-template-areas: "sim" "mesures"; } }
+  body.mode-classe .titre-tp { font-size: clamp(26px, 3.6vw, 46px); margin-bottom: 16px; }
+  body.mode-classe .afficheur { font-size: clamp(28px, 4.2vw, 56px); padding: 12px 22px; }
+  body.mode-classe .curseur-tete label, body.mode-classe .valeur { font-size: clamp(18px, 2.2vw, 28px); }
+  body.mode-classe input[type=range] { height: 56px; }
+  body.mode-classe input[type=range]::-webkit-slider-runnable-track { height: 12px; }
+  body.mode-classe input[type=range]::-webkit-slider-thumb { width: 38px; height: 38px; margin-top: -13px; }
+  body.mode-classe .btn { font-size: 20px; min-height: 56px; }
+  body.mode-classe table, body.mode-classe select { font-size: 18px; }
+  body.mode-classe thead th { font-size: 16px; }
+  body.mode-classe .table-defile { max-height: 30vh; }
+  body.mode-classe .graphe-boite { height: min(50vh, 520px); }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+  }
+
+  /* ---------- Impression du compte rendu ---------- */
+  @media print {
+    @page { margin: 15mm; }
+    body { background: #fff; font-size: 12pt; }
+    .entete, .pied, .bandeau, #ecranAccueil, .barre-labo, #titreTP, #objectifTP, #explication,
+    #carteSim, #carteMesures, #carteProf, #carteRapport > .carte-tete, #aideRapport, #btnRapport,
+    .no-print, .visite, .quitter-classe, .lien-evitement { display: none !important; }
+    main { padding: 0; max-width: none; }
+    .labo { display: block; }
+    #carteRapport { border: 0; padding: 0; box-shadow: none; }
+    .feuille { border: 0; padding: 0; margin: 0; }
+    .feuille-eleve { display: block; margin: 0 0 14px; }
+    .feuille table, .feuille figure { break-inside: avoid; }
+    .feuille .table-defile { overflow: visible; border: 0; }
+    .feuille th, .feuille td { border: 1px solid #999; }
+  }
 </style>
 </head>
 <body>
-<header>
-  <h1 onclick="allerAccueil()">🔬 LaboPoche</h1>
-  <span class="tag">Le labo de sciences dans ta poche</span>
-  <button id="btnVoix" onclick="basculerVoix()">🔊 Voix : oui</button>
-</header>
+<!-- Logo défini une seule fois, réutilisé partout avec <use href="#logo"> -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="logo" viewBox="0 0 48 48">
+    <rect x="9" y="2.5" width="30" height="43" rx="7" fill="#FFFFFF" stroke="#1B1F2A" stroke-width="2.5"/>
+    <line x1="20.5" y1="7" x2="27.5" y2="7" stroke="#1B1F2A" stroke-width="2" stroke-linecap="round"/>
+    <path d="M17.6 28 H30.4 L33.6 35 Q34.3 37.5 31.8 37.5 H16.2 Q13.7 37.5 14.4 35 Z" fill="#0F8A5F"/>
+    <circle cx="21" cy="33" r="1.3" fill="#E3F4EC"/>
+    <circle cx="26.5" cy="31" r="1" fill="#E3F4EC"/>
+    <path d="M21 12.5 V21 L14.4 35 Q13.7 37.5 16.2 37.5 H31.8 Q34.3 37.5 33.6 35 L27 21 V12.5" fill="none" stroke="#1B1F2A" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>
+    <line x1="19" y1="12.5" x2="29" y2="12.5" stroke="#1B1F2A" stroke-width="2.2" stroke-linecap="round"/>
+    <path d="M32.5 13 L33.5 15.7 L36.2 16.7 L33.5 17.7 L32.5 20.4 L31.5 17.7 L28.8 16.7 L31.5 15.7 Z" fill="#E8792B"/>
+  </symbol>
+</svg>
 
-<main>
+<a class="lien-evitement" href="#contenu">Aller au contenu</a>
+
+<header class="entete">
+  <a class="marque" href="/" onclick="allerAccueil(); return false;" aria-label="LaboPoche, retour à l'accueil">
+    <svg class="logo" aria-hidden="true"><use href="#logo"/></svg>
+    <span class="nom">Labo<span class="poche">Poche</span></span>
+    <span class="slogan">Le labo de sciences dans ta poche</span>
+  </a>
+  <div class="actions-entete">
+    <button class="btn-entete" id="btnAide" onclick="lancerVisite(true)" aria-label="Aide : afficher la visite guidée">? <span>Aide</span></button>
+    <button class="btn-entete" id="btnVoix" onclick="basculerVoix()" aria-pressed="true" aria-label="Voix du professeur activée. Appuie pour la couper.">🔊</button>
+  </div>
+</header>
+<div id="bandeauHorsLigne" class="bandeau cache" role="status">Tu es hors connexion : les simulations fonctionnent, mais le professeur IA a besoin d'internet.</div>
+<noscript><p class="bandeau">LaboPoche a besoin de JavaScript pour fonctionner. Active-le dans ton navigateur.</p></noscript>
+
+<main id="contenu">
   <!-- ===================== ÉCRAN ACCUEIL ===================== -->
   <section id="ecranAccueil">
-    <div class="carte">
-      <h2>Quelle expérience veux-tu faire ?</h2>
-      <p class="doux">Parle, écris, ou prends en photo ta leçon. Le professeur IA prépare le TP pour toi.</p>
-      <div class="rangee" style="flex-wrap: nowrap;">
-        <button class="micro" id="microAccueil" title="Parler">🎤</button>
-        <input type="text" id="texteAccueil" placeholder="Ex : je veux faire le TP sur la loi d'Ohm">
+    <div class="hero">
+      <div>
+        <p class="surtitre">Laboratoire virtuel de physique-chimie</p>
+        <h1>Fais de vraies expériences de sciences, <em>même sans laboratoire</em></h1>
+        <p class="hero-sous">Prédis le résultat, manipule une simulation sur ton téléphone, et un professeur IA t'aide à comprendre, jusqu'à ton compte rendu de TP.</p>
+        <div class="hero-actions">
+          <button class="btn btn-grand" onclick="allerA('choisir')">Commencer un TP</button>
+          <button class="btn btn-grand btn-contour" onclick="allerA('comment')">Comment ça marche ?</button>
+        </div>
+        <ul class="puces" aria-label="Expériences disponibles">
+          <li>⚡ Loi d'Ohm</li><li>🌈 Réfraction</li><li>⏱️ Cinétique chimique</li>
+        </ul>
       </div>
-      <div class="rangee" style="margin-top: 10px;">
-        <button class="btn" id="btnComprendre" onclick="comprendre()">Lancer le TP</button>
-        <label class="btn secondaire">📷 Photo de ma leçon
-          <input type="file" accept="image/*" capture="environment" id="photoLecon" class="cache">
-        </label>
-        <span id="infoPhoto" class="note"></span>
+      <div class="hero-visuel" aria-hidden="true">
+        <svg class="logo-grand"><use href="#logo"/></svg>
+        <div class="mini mini-afficheur">I = 60,0 mA</div>
+        <div class="mini mini-bulle">👩🏾‍🏫 Avant de manipuler, fais une prédiction !</div>
       </div>
-      <p id="msgAccueil" class="chargement"></p>
     </div>
 
-    <div class="carte">
-      <h2>Ou choisis directement</h2>
-      <div class="grille3">
-        <button class="exp" onclick="ouvrirLabo('ohm')"><b>⚡ Loi d'Ohm</b><span>Tension, intensité et résistance dans un circuit.</span></button>
-        <button class="exp" onclick="ouvrirLabo('refraction')"><b>🌈 Réfraction</b><span>La lumière qui change de direction entre deux milieux.</span></button>
-        <button class="exp" onclick="ouvrirLabo('cinetique')"><b>⏱️ Cinétique chimique</b><span>Hydrolyse du chlorure de tertiobutyle : vitesse et température.</span></button>
+    <section class="section" id="comment" aria-labelledby="titreComment">
+      <h2 id="titreComment">Comment ça marche ?</h2>
+      <p class="section-intro">Un TP LaboPoche se fait en trois étapes, comme un vrai TP au laboratoire.</p>
+      <ol class="etapes-cm">
+        <li class="etape-cm carte">
+          <span class="icone-etape" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1V17h6v-.2c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/></svg></span>
+          <div><h3>1. Je prédis</h3><p>Avant de toucher à quoi que ce soit, je dis ce qui va se passer selon moi.</p></div>
+        </li>
+        <li class="etape-cm carte">
+          <span class="icone-etape" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h9M17 6h3M4 12h3M11 12h9M4 18h11M19 18h1"/><circle cx="15" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="18" r="2"/></svg></span>
+          <div><h3>2. Je manipule</h3><p>Je bouge les curseurs de la simulation et je fais mes mesures, comme au labo.</p></div>
+        </li>
+        <li class="etape-cm carte">
+          <span class="icone-etape" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="m9 15 2 2 4-4"/></svg></span>
+          <div><h3>3. Je comprends</h3><p>Le professeur IA m'aide à comparer ma prédiction au résultat, puis j'obtiens mon compte rendu de TP.</p></div>
+        </li>
+      </ol>
+    </section>
+
+    <section class="section" id="choisir" aria-labelledby="titreChoisir">
+      <h2 id="titreChoisir">Choisis ton expérience</h2>
+      <p class="section-intro">Trois TP du programme de lycée, prêts à faire sur ton téléphone.</p>
+      <div class="grille-exp" id="grilleExp">
+        <button class="exp" onclick="ouvrirLabo('ohm')">
+          <span class="exp-haut"><span class="exp-icone" aria-hidden="true">⚡</span><span class="niveau">2nde – 1re</span></span>
+          <h3>Loi d'Ohm</h3>
+          <p>Fais varier la tension et la résistance d'un circuit, et découvre comment change l'intensité du courant.</p>
+          <span class="aller">Commencer →</span>
+        </button>
+        <button class="exp" onclick="ouvrirLabo('refraction')">
+          <span class="exp-haut"><span class="exp-icone" aria-hidden="true">🌈</span><span class="niveau">2nde – 1re</span></span>
+          <h3>Réfraction de la lumière</h3>
+          <p>Envoie un rayon de lumière de l'air vers l'eau ou le verre, et observe comment il change de direction.</p>
+          <span class="aller">Commencer →</span>
+        </button>
+        <button class="exp" onclick="ouvrirLabo('cinetique')">
+          <span class="exp-haut"><span class="exp-icone" aria-hidden="true">⏱️</span><span class="niveau">Terminale</span></span>
+          <h3>Cinétique chimique</h3>
+          <p>Suis l'hydrolyse du chlorure de tertiobutyle et découvre l'effet de la température sur la vitesse d'une réaction.</p>
+          <span class="aller">Commencer →</span>
+        </button>
       </div>
-    </div>
-    <p class="note">Aucune donnée personnelle n'est demandée. Les simulations sont des modèles pédagogiques.</p>
+
+      <div class="carte" id="carteDemande">
+        <h3>Ou demande au professeur</h3>
+        <p class="aide">Écris, dicte ou prends en photo ta leçon : le professeur IA choisit l'expérience qui correspond.</p>
+        <div class="saisie">
+          <button class="micro" id="microAccueil" aria-label="Dicter ta demande">🎤</button>
+          <input type="text" id="texteAccueil" placeholder="Ex : je veux faire le TP sur la loi d'Ohm" aria-label="Ta demande au professeur" enterkeyhint="go" autocomplete="off">
+        </div>
+        <p class="statut-micro" id="statutMicroAccueil" aria-live="polite"></p>
+        <div class="ligne-actions">
+          <button class="btn" id="btnComprendre" onclick="comprendre()">Lancer le TP</button>
+          <label class="btn btn-secondaire btn-photo">📷 Photo de ma leçon
+            <input type="file" accept="image/*" capture="environment" id="photoLecon" class="sr-only">
+          </label>
+          <span id="infoPhoto" class="note"></span>
+        </div>
+        <p id="msgAccueil" class="message-attente" aria-live="polite"></p>
+      </div>
+    </section>
+
+    <section class="section" id="apropos" aria-labelledby="titreApropos">
+      <h2 id="titreApropos">À propos de LaboPoche</h2>
+      <div class="apropos">
+        <div class="carte">
+          <h3>Le problème</h3>
+          <p>Dans de nombreux lycées togolais, les laboratoires de sciences sont absents ou manquent de matériel. Beaucoup d'élèves apprennent la physique-chimie sans pouvoir faire les expériences de leur programme.</p>
+        </div>
+        <div class="carte">
+          <h3>Notre solution</h3>
+          <p>LaboPoche transforme un simple téléphone en laboratoire : l'élève prédit, manipule une simulation et mesure, pendant qu'un professeur IA le guide sans lui donner la réponse. À la fin, il obtient un compte rendu de TP construit avec ses propres mesures. Pas d'inscription : il suffit d'ouvrir le lien.</p>
+        </div>
+        <div class="carte">
+          <h3>Sources</h3>
+          <ul class="sources">
+            <li><a href="https://www.ajol.info/index.php/echanges/article/view/255476/241384" target="_blank" rel="noopener">Université de Lomé, revue Échanges (2023)</a></li>
+            <li><a href="https://www.undp.org/fr/node/381456" target="_blank" rel="noopener">PNUD Togo (2023)</a></li>
+            <li><a href="https://apprendre.auf.org/wp-content/uploads/2025/10/13-DID_Sciences_college.pdf" target="_blank" rel="noopener">Journées nationales de l'innovation pédagogique</a></li>
+            <li><a href="https://www.unicef.org/togo/recits/le-r%C3%AAve-de-modoukp%C3%A8-prend-son-envol" target="_blank" rel="noopener">UNICEF Togo : « Le rêve de Modoukpè prend son envol »</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
   </section>
 
-  <!-- ===================== ÉCRAN LABO ===================== -->
+  <!-- ===================== ÉCRAN EXPÉRIENCE ===================== -->
   <section id="ecranLabo" class="cache">
-    <div class="rangee" style="margin-bottom: 10px;">
-      <button class="btn secondaire" onclick="allerAccueil()">← Accueil</button>
-      <h2 id="titreTP" style="margin: 0;"></h2>
+    <div class="barre-labo">
+      <button class="btn btn-contour" onclick="allerAccueil()">← Accueil</button>
+      <button class="btn btn-contour" id="btnClasse" onclick="basculerModeClasse()">📺 Mode classe</button>
     </div>
+    <h2 id="titreTP" class="titre-tp"></h2>
     <p id="objectifTP" class="doux"></p>
 
+    <details class="carte explication" id="explication">
+      <summary>💡 C'est quoi cette expérience ?</summary>
+      <div class="explication-corps" id="texteExplication"></div>
+    </details>
+
     <div class="labo">
-      <div>
-        <div class="carte" id="zoneSim"></div>
-        <div class="carte">
-          <div class="rangee" style="justify-content: space-between;">
-            <b>Mes mesures</b>
-            <div class="rangee">
-              <button class="btn" onclick="mesurer()">📏 Mesurer</button>
-              <button class="btn secondaire" onclick="viderMesures()">Effacer</button>
-            </div>
-          </div>
-          <table id="tableMesures"></table>
-          <canvas id="graphe" height="200" style="margin-top: 10px;"></canvas>
-        </div>
+      <div class="carte" id="carteSim">
+        <canvas class="sim" id="canvasSim" width="600" height="320" role="img" aria-label="Dessin de la simulation"></canvas>
+        <div class="zone-afficheur" id="afficheur"></div>
+        <div id="controles"></div>
       </div>
 
-      <div>
-        <div class="carte">
-          <div class="rangee" style="justify-content: space-between;">
-            <b>👩🏾‍🏫 Ton professeur de TP</b>
-            <span class="badge" id="etapeBadge">Étape 1 : prédiction</span>
+      <div class="carte" id="carteMesures">
+        <div class="carte-tete">
+          <h3>Mes mesures</h3>
+          <div class="ligne-actions" style="margin: 0;">
+            <button class="btn" id="btnMesurer" onclick="mesurer()">📏 Mesurer</button>
+            <button class="btn btn-contour" onclick="viderMesures()">Effacer</button>
           </div>
-          <div class="chat" id="chat"></div>
-          <div class="rangee" style="flex-wrap: nowrap;">
-            <button class="micro" id="microProf" style="width: 48px; height: 48px; font-size: 20px;">🎤</button>
-            <input type="text" id="texteProf" placeholder="Ta prédiction ou ta question…">
-          </div>
-          <button class="btn" style="margin-top: 8px; width: 100%;" id="btnProf" onclick="parlerAuProf()">Envoyer</button>
         </div>
-        <div class="carte">
-          <button class="btn orange" style="width: 100%;" id="btnRapport" onclick="genererRapport()">📝 Générer mon compte rendu de TP</button>
-          <div id="rapport" class="rapport"></div>
+        <p class="aide">Chaque ligne est une mesure que tu as faite.</p>
+        <div class="table-defile"><table id="tableMesures"></table></div>
+        <div class="graphe-boite">
+          <canvas id="graphe" aria-label="Graphique de tes mesures" role="img"></canvas>
+          <div class="graphe-vide" id="grapheVide">Ton graphique apparaîtra ici après ta première mesure.</div>
         </div>
+        <div class="lecture"><b>Comment lire ce graphique ?</b><p id="lectureGraphe"></p></div>
+      </div>
+
+      <div class="carte" id="carteProf">
+        <div class="prof-titre">
+          <span class="avatar" id="avatarProf" aria-hidden="true">👩🏾‍🏫</span>
+          <h3 style="margin:0; font-size:18px;">Ton professeur de TP<span class="etat-prof" id="etatProf" aria-live="polite"></span></h3>
+        </div>
+        <ol class="etapes" id="etapes" aria-label="Étapes du TP" style="margin-top:12px;">
+          <li>Prédis</li><li>Manipule et mesure</li><li>Génère ton compte rendu</li>
+        </ol>
+        <div class="chat" id="chat" aria-live="polite"></div>
+        <div class="barre-voix">
+          <button class="btn-lien" id="btnReecouterQ" onclick="reecouterQuestion()" disabled>🔊 Réécouter la question</button>
+          <button class="btn-stop cache" id="btnStop" onclick="arreterVoix()">⏹ Arrêter</button>
+        </div>
+        <div class="saisie">
+          <button class="micro" id="microProf" aria-label="Dicter ta réponse">🎤</button>
+          <input type="text" id="texteProf" placeholder="Ta prédiction ou ta question…" aria-label="Ta prédiction ou ta question" enterkeyhint="send" autocomplete="off">
+        </div>
+        <p class="statut-micro" id="statutMicroProf" aria-live="polite"></p>
+        <button class="btn btn-plein" id="btnProf" onclick="parlerAuProf()">Envoyer</button>
+      </div>
+
+      <div class="carte" id="carteRapport">
+        <div class="carte-tete"><h3>📝 Mon compte rendu</h3></div>
+        <p class="aide" id="aideRapport"></p>
+        <button class="btn btn-orange btn-plein" id="btnRapport" onclick="genererRapport()">Générer mon compte rendu de TP</button>
+        <div id="rapport"></div>
       </div>
     </div>
+    <button class="btn quitter-classe" onclick="basculerModeClasse()">✕ Quitter le mode classe</button>
   </section>
 </main>
 
+<footer class="pied">
+  <div class="pied-int">
+    <div class="pied-marque"><svg class="logo" aria-hidden="true"><use href="#logo"/></svg> LaboPoche — par l'équipe GENESIS</div>
+    <!-- À REMPLIR : noms de l'équipe et e-mail de contact -->
+    <p>Équipe : [à remplir : Prénom NOM], [à remplir], [à remplir], [à remplir]</p>
+    <p>Projet réalisé pour le Hackathon Create With AI — Lomé 2026</p>
+    <p>Propulsé par Google Gemini · Développé avec l'aide de Claude</p>
+    <p>Les simulations sont des modèles pédagogiques simplifiés. Aucune donnée personnelle n'est collectée.</p>
+    <p>Contact : [à remplir : e-mail de l'équipe]</p>
+  </div>
+</footer>
+
+<div id="visite" class="visite cache" role="dialog" aria-labelledby="visiteTitre">
+  <p class="visite-compteur" id="visiteCompteur"></p>
+  <h3 id="visiteTitre"></h3>
+  <p id="visiteTexte"></p>
+  <div class="ligne-actions">
+    <button class="btn btn-contour" onclick="finirVisite()">Passer</button>
+    <button class="btn" id="visiteSuivant" onclick="etapeVisite(1)">Suivant</button>
+  </div>
+</div>
+<div id="annonce" class="sr-only" aria-live="polite"></div>
+
 <script>
 /* =========================================================
-   1. ÉTAT GLOBAL
+   1. ÉTAT GLOBAL ET PETITS OUTILS
    ========================================================= */
 let expCourante = null;          // 'ohm' | 'refraction' | 'cinetique'
 let valeurs = {};                // valeurs des curseurs
 let mesures = [];                // tableau des mesures
 let predictionFaite = false;
+let rappelPrediction = false;    // le conseil « prédis d'abord » n'est donné qu'une fois
 let questionPrediction = '';     // question posée à l'élève avant de manipuler
+let derniereQuestionProf = '';   // dernier message du prof, pour « Réécouter la question »
 let photoBase64 = null;
 let voixActive = true;
 let graphe = null;
 let animCinetique = null;
+let jetonTP = 0;                 // change à chaque TP : ignore les réponses IA d'un TP qu'on a quitté
+let profOccupe = false, rapportOccupe = false;
+
+const ENCRE = '#1B1F2A', PAPIER = '#FBFAF6', ORANGE = '#E8792B', BLEU = '#2563C9', VERT = '#0F8A5F';
+const COULEURS_SERIES = ['#2563C9', '#0F8A5F', '#E8792B', '#7C3AED', '#DB2777', '#0891B2'];
+const $ = id => document.getElementById(id);
+const fr = (x, d) => Number(x).toFixed(d).replace('.', ',');        // 6.5 -> "6,5"
+const echap = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const police = (poids, taille) => `${poids} ${taille}px Inter, system-ui, sans-serif`;
+const mouvementReduit = () => window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+function lireLS(cle) { try { return localStorage.getItem(cle); } catch (e) { return null; } }
+function ecrireLS(cle, val) { try { localStorage.setItem(cle, val); } catch (e) { /* stockage bloqué : sans gravité */ } }
+function annoncer(texte) { $('annonce').textContent = ''; setTimeout(() => $('annonce').textContent = texte, 50); }
+function allerA(id) { $(id).scrollIntoView({ behavior: mouvementReduit() ? 'auto' : 'smooth', block: 'start' }); }
 
 /* =========================================================
    2. DÉFINITION DES EXPÉRIENCES
+   Chaque expérience décrit : ses textes d'explication, ses curseurs
+   (avec une aide ⓘ), son calcul physique, son tableau et son graphique.
    ========================================================= */
+const NOMS_MILIEUX = { air: 'Air', eau: 'Eau', verre: 'Verre' };
+const libelleMilieux = m => m.split('-').map(x => NOMS_MILIEUX[x]).join(' → ');
+
 const EXPERIENCES = {
   ohm: {
     titre: "Loi d'Ohm",
     objectif: "Découvrir la relation entre la tension U, l'intensité I et la résistance R.",
     question: "Si on double la tension aux bornes de la résistance, que devient l'intensité du courant selon toi ?",
+    explication: [
+      "Dans ce circuit, un générateur alimente une résistance (un conducteur ohmique). Un ampèremètre, branché en série, mesure l'intensité I du courant qui la traverse.",
+      "La loi d'Ohm dit que la tension U aux bornes de la résistance est proportionnelle à l'intensité I du courant. Le coefficient de proportionnalité est la résistance R.",
+      "La petite lampe témoin brille plus quand le circuit reçoit plus d'énergie (dessin indicatif)."
+    ],
+    formule: "U = R × I    (U en volts, R en ohms, I en ampères ; 1 A = 1000 mA)",
     curseurs: [
-      { id: 'U', nom: 'Tension U', unite: 'V', min: 0, max: 12, pas: 0.5, val: 6 },
-      { id: 'R', nom: 'Résistance R', unite: 'Ω', min: 10, max: 1000, pas: 10, val: 100 }
+      { id: 'U', nom: 'Tension U', unite: 'V', min: 0, max: 12, pas: 0.5, val: 6,
+        aide: "La tension U se mesure en volts (V). C'est le générateur qui la fournit : plus elle est grande, plus il « pousse » le courant dans le circuit." },
+      { id: 'R', nom: 'Résistance R', unite: 'Ω', min: 10, max: 1000, pas: 10, val: 100,
+        aide: "La résistance R se mesure en ohms (Ω). Elle freine le passage du courant : à tension égale, plus R est grande, plus l'intensité I est petite." }
     ],
     colonnes: ['U (V)', 'R (Ω)', 'I (mA)'],
     calcul: v => ({ I: v.U / v.R * 1000 }),
-    ligne: (v, c) => [v.U.toFixed(1), v.R, c.I.toFixed(1)],
+    ligne: (v, c) => [fr(v.U, 1), v.R, fr(c.I, 1)],
     axeX: 'I (mA)', axeY: 'U (V)',
-    point: (v, c) => ({ x: c.I, y: v.U })
+    point: (v, c) => ({ x: c.I, y: v.U }),
+    serie: v => 'R = ' + v.R + ' Ω',
+    lecture: "Chaque couleur correspond à une valeur de R. Garde la même résistance et fais varier U : si les points sont alignés sur une droite qui passe par l'origine, U et I sont proportionnels. La pente de cette droite correspond à R (attention : I est en mA, donc R = pente × 1000)."
   },
   refraction: {
     titre: "Réfraction de la lumière",
     objectif: "Observer comment un rayon lumineux change de direction en passant d'un milieu à un autre.",
     question: "Quand le rayon passe de l'air à l'eau, penses-tu qu'il se rapproche ou s'éloigne de la normale ?",
-    curseurs: [
-      { id: 'i1', nom: "Angle d'incidence i1", unite: '°', min: 0, max: 89, pas: 1, val: 40 }
+    explication: [
+      "Quand la lumière passe d'un milieu transparent à un autre (air, eau, verre), elle change de direction à la surface de séparation : c'est la réfraction.",
+      "Les angles se mesurent par rapport à la normale : la droite en pointillés, perpendiculaire à la surface. Chaque milieu a un indice de réfraction n : air 1,00 ; eau 1,33 ; verre 1,50 (valeurs usuelles).",
+      "Quand la lumière va vers un milieu d'indice plus petit (par exemple de l'eau vers l'air), au-delà d'un certain angle appelé angle limite, elle ne traverse plus : c'est la réflexion totale."
     ],
-    choix: { id: 'milieu', options: [
+    formule: "n1 × sin(i1) = n2 × sin(i2)    (loi de Snell-Descartes)",
+    curseurs: [
+      { id: 'i1', nom: "Angle d'incidence i1", unite: '°', min: 0, max: 89, pas: 1, val: 40,
+        aide: "L'angle d'incidence i1, en degrés (°), est l'angle entre le rayon qui arrive et la normale. À 0°, le rayon arrive perpendiculairement à la surface et ne dévie pas." }
+    ],
+    choix: { id: 'milieu', nom: 'Milieux traversés', options: [
       ['air-eau', 'Air → Eau'], ['air-verre', 'Air → Verre'],
       ['eau-air', 'Eau → Air'], ['verre-air', 'Verre → Air']
-    ], val: 'air-eau' },
+    ], val: 'air-eau',
+      aide: "Le premier milieu est celui d'où vient la lumière, le second celui où elle entre. Plus l'indice n d'un milieu est grand, plus la lumière y va lentement. En entrant dans un milieu d'indice plus grand, le rayon se rapproche de la normale." },
     colonnes: ['Milieux', 'i1 (°)', 'i2 (°)'],
     calcul: v => {
       const n = { air: 1.00, eau: 1.33, verre: 1.50 };
@@ -191,18 +630,30 @@ const EXPERIENCES = {
       const s = n1 / n2 * Math.sin(v.i1 * Math.PI / 180);
       return { n1, n2, totale: s > 1, i2: s > 1 ? null : Math.asin(s) * 180 / Math.PI };
     },
-    ligne: (v, c) => [v.milieu, v.i1, c.totale ? 'réflexion totale' : c.i2.toFixed(1)],
+    ligne: (v, c) => [libelleMilieux(v.milieu), v.i1, c.totale ? 'réflexion totale' : fr(c.i2, 1)],
     axeX: 'sin i1', axeY: 'sin i2',
-    point: (v, c) => c.totale ? null : ({ x: Math.sin(v.i1 * Math.PI / 180), y: Math.sin(c.i2 * Math.PI / 180) })
+    point: (v, c) => c.totale ? null : ({ x: Math.sin(v.i1 * Math.PI / 180), y: Math.sin(c.i2 * Math.PI / 180) }),
+    serie: v => libelleMilieux(v.milieu),
+    lecture: "Chaque couleur correspond à un couple de milieux. Garde les mêmes milieux et change seulement i1 : les points sont alignés sur une droite qui passe par l'origine, car sin i2 est proportionnel à sin i1. La pente de la droite vaut n1 / n2. Les mesures en réflexion totale n'apparaissent pas sur le graphique."
   },
   cinetique: {
     titre: "Cinétique : hydrolyse du chlorure de tertiobutyle",
     objectif: "Voir comment la température influence la vitesse d'une réaction, en suivant la conductivité (modèle simplifié).",
     question: "Si on chauffe la solution de 20 °C à 30 °C, la réaction ira-t-elle plus vite, moins vite ou à la même vitesse ? Pourquoi ?",
+    explication: [
+      "Le chlorure de tertiobutyle réagit avec l'eau (en TP, dans un mélange eau-acétone) : (CH3)3C–Cl + 2 H2O → (CH3)3C–OH + H3O+ + Cl−.",
+      "Cette réaction produit des ions, donc la conductivité σ de la solution augmente au fur et à mesure que la réaction avance. En suivant σ au cours du temps, on suit l'avancement de la réaction.",
+      "Le temps de demi-réaction t½ est la durée au bout de laquelle l'avancement atteint la moitié de sa valeur finale.",
+      "C'est un modèle simplifié : ici, la vitesse double environ quand la température augmente de 10 °C, et σ est donnée en unités arbitraires (u.a.)."
+    ],
+    formule: "σ(t) = σmax × (1 − e^(−k × t))    et    t½ = ln 2 / k",
     curseurs: [
-      { id: 'T', nom: 'Température', unite: '°C', min: 15, max: 45, pas: 1, val: 20 },
-      { id: 'C', nom: 'Concentration initiale', unite: 'mol/L', min: 0.05, max: 0.2, pas: 0.01, val: 0.1 },
-      { id: 't', nom: 'Temps écoulé', unite: 'min', min: 0, max: 120, pas: 1, val: 0 }
+      { id: 'T', nom: 'Température', unite: '°C', min: 15, max: 45, pas: 1, val: 20,
+        aide: "La température, en degrés Celsius (°C). Plus elle est élevée, plus la réaction est rapide : la conductivité monte plus vite et t½ diminue." },
+      { id: 'C', nom: 'Concentration initiale', unite: 'mol/L', min: 0.05, max: 0.2, pas: 0.01, val: 0.1,
+        aide: "La concentration initiale en chlorure de tertiobutyle, en mol/L. Plus elle est grande, plus il se forme d'ions, donc plus la conductivité finale est grande. Dans ce modèle (réaction d'ordre 1), t½ ne dépend pas de la concentration." },
+      { id: 't', nom: 'Temps écoulé', unite: 'min', min: 0, max: 120, pas: 1, val: 0,
+        aide: "Le temps écoulé depuis le début de la réaction, en minutes. Tu peux le régler à la main, ou appuyer sur « Lancer la réaction » pour le faire défiler en accéléré." }
     ],
     colonnes: ['T (°C)', 'C (mol/L)', 't (min)', 'σ (u.a.)'],
     // Modèle simplifié : sigma(t) = sigmaMax (1 - e^(-k t)) ; k double tous les 10 °C
@@ -211,283 +662,469 @@ const EXPERIENCES = {
       const sMax = 1000 * v.C;
       return { k, sigma: sMax * (1 - Math.exp(-k * v.t)), tDemi: Math.log(2) / k };
     },
-    ligne: (v, c) => [v.T, v.C.toFixed(2), v.t, c.sigma.toFixed(1)],
-    axeX: 't (min)', axeY: 'σ (unités arbitraires)',
-    point: (v, c) => ({ x: v.t, y: c.sigma })
+    ligne: (v, c) => [v.T, fr(v.C, 2), v.t, fr(c.sigma, 1)],
+    axeX: 't (min)', axeY: 'σ (u.a.)',
+    point: (v, c) => ({ x: v.t, y: c.sigma }),
+    serie: v => v.T + ' °C, ' + fr(v.C, 2) + ' mol/L',
+    relier: true,
+    lecture: "Chaque couleur correspond à une température (et une concentration). La courbe monte vite au début puis se stabilise : la réaction ralentit car il reste de moins en moins de réactif. Pour lire t½, repère le temps où σ atteint la moitié de sa valeur finale. La courbe qui monte le plus vite correspond à la réaction la plus rapide."
   }
 };
 
 /* =========================================================
-   3. NAVIGATION
+   3. NAVIGATION (écrans, bouton retour du téléphone, mode classe)
    ========================================================= */
 function allerAccueil() {
-  arreterAnimation();
-  document.getElementById('ecranLabo').classList.add('cache');
-  document.getElementById('ecranAccueil').classList.remove('cache');
-  window.speechSynthesis && speechSynthesis.cancel();
+  // Si on est arrivé au labo depuis l'accueil, on recule dans l'historique (le bouton retour reste cohérent)
+  if (history.state && history.state.labo) history.back();
+  else afficherAccueil();
 }
 
-function ouvrirLabo(id, infosIA) {
+function afficherAccueil() {
+  jetonTP++;
+  arreterAnimation(); arreterVoix(); finirVisite();
+  if (document.body.classList.contains('mode-classe')) basculerModeClasse();
+  $('ecranLabo').classList.add('cache');
+  $('ecranAccueil').classList.remove('cache');
+  document.title = 'LaboPoche — Le labo de sciences dans ta poche';
+  window.scrollTo(0, 0);
+}
+
+function ouvrirLabo(id, infosIA, depuisHistorique) {
+  if (!EXPERIENCES[id]) return;
+  jetonTP++;
+  arreterAnimation(); arreterVoix(); finirVisite();
   expCourante = id;
   const e = EXPERIENCES[id];
-  mesures = [];
-  predictionFaite = false;
+  const texteIA = cle => infosIA && typeof infosIA[cle] === 'string' && infosIA[cle].trim() ? infosIA[cle].trim() : null;
+  mesures = []; predictionFaite = false; rappelPrediction = false; derniereQuestionProf = '';
   valeurs = {};
   e.curseurs.forEach(c => valeurs[c.id] = c.val);
   if (e.choix) valeurs[e.choix.id] = e.choix.val;
 
-  document.getElementById('titreTP').textContent = (infosIA && infosIA.titre) || e.titre;
-  document.getElementById('objectifTP').textContent = (infosIA && infosIA.objectif) || e.objectif;
-  document.getElementById('rapport').innerHTML = '';
-  document.getElementById('chat').innerHTML = '';
-  majBadge();
+  $('titreTP').textContent = texteIA('titre') || e.titre;
+  $('objectifTP').textContent = texteIA('objectif') || e.objectif;
+  document.title = e.titre + ' — LaboPoche';
+  const corps = $('texteExplication');
+  corps.innerHTML = '';
+  e.explication.forEach(t => { const p = document.createElement('p'); p.textContent = t; corps.appendChild(p); });
+  const f = document.createElement('div'); f.className = 'formule'; f.textContent = e.formule; corps.appendChild(f);
+  $('explication').open = false;
+  $('lectureGraphe').textContent = e.lecture;
+  $('rapport').innerHTML = '';
+  $('chat').innerHTML = '';
 
   construireSimulation();
   majTable();
   initGraphe();
+  majEtapes();
 
-  document.getElementById('ecranAccueil').classList.add('cache');
-  document.getElementById('ecranLabo').classList.remove('cache');
+  $('ecranAccueil').classList.add('cache');
+  $('ecranLabo').classList.remove('cache');
   window.scrollTo(0, 0);
+  // Une seule entrée « labo » dans l'historique : le bouton retour ramène toujours à l'accueil
+  if (!depuisHistorique) {
+    if (history.state && history.state.labo) history.replaceState({ labo: id }, '', '#' + id);
+    else history.pushState({ labo: id }, '', '#' + id);
+  }
 
-  const question = (infosIA && infosIA.question_prediction) || e.question;
-  questionPrediction = question;
-  ajouterBulle('prof', "Avant de manipuler, fais une prédiction : " + question);
+  questionPrediction = texteIA('question_prediction') || e.question;
+  ajouterBulle('prof', "Avant de manipuler, fais une prédiction. " + questionPrediction);
+  setTimeout(() => lancerVisite(false), 600);
 }
 
-function majBadge() {
-  document.getElementById('etapeBadge').textContent =
-    predictionFaite ? 'Étape 2 : expérimente !' : 'Étape 1 : prédiction';
+// Bouton « retour » du téléphone : on revient à l'accueil au lieu de quitter le site
+window.addEventListener('popstate', ev => {
+  if (ev.state && ev.state.labo) ouvrirLabo(ev.state.labo, null, true);
+  else afficherAccueil();
+});
+
+// Étapes du TP : 1 Prédis -> 2 Manipule et mesure -> 3 Compte rendu
+function majEtapes() {
+  const n = !predictionFaite ? 1 : (mesures.length < 3 ? 2 : 3);
+  [...$('etapes').children].forEach((li, i) => {
+    li.className = i + 1 < n ? 'faite' : (i + 1 === n ? 'active' : '');
+    if (i + 1 === n) li.setAttribute('aria-current', 'step'); else li.removeAttribute('aria-current');
+  });
+  const nb = mesures.length;
+  $('aideRapport').textContent = nb >= 3
+    ? `Tu as ${nb} mesures : tu peux générer ton compte rendu.`
+    : `Fais au moins 3 mesures pour générer ton compte rendu (tu en as ${nb}).`;
 }
+
+// Mode classe : plein écran pour projeter au tableau (repli CSS si le plein écran est refusé)
+function basculerModeClasse() {
+  const activer = !document.body.classList.contains('mode-classe');
+  document.body.classList.toggle('mode-classe', activer);
+  const el = document.documentElement;
+  if (activer) {
+    finirVisite();
+    try {
+      if (el.requestFullscreen) el.requestFullscreen().catch(() => {});
+      else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+    } catch (e) { /* plein écran indisponible : le mode CSS suffit */ }
+  } else if (document.fullscreenElement && document.exitFullscreen) {
+    document.exitFullscreen().catch(() => {});
+  }
+  window.scrollTo(0, 0);
+  if (typeof Chart !== 'undefined') Chart.defaults.font.size = activer ? 18 : 12;   // graphique lisible au fond de la classe
+  setTimeout(() => { if (graphe) { graphe.resize(); graphe.update(); } }, 300);
+}
+document.addEventListener('fullscreenchange', () => {
+  // Sortie du plein écran avec la touche Échap : on quitte aussi le mode classe
+  if (!document.fullscreenElement && document.body.classList.contains('mode-classe')) basculerModeClasse();
+});
 
 /* =========================================================
    4. SIMULATIONS
    ========================================================= */
 function construireSimulation() {
   const e = EXPERIENCES[expCourante];
-  const zone = document.getElementById('zoneSim');
-  let html = '<canvas class="sim" id="canvasSim" width="600" height="320"></canvas>';
-  html += '<div id="afficheur" style="margin-top:10px;"></div>';
+  const zone = $('controles');
+  let html = '';
+  const bloc = (id, nom, aide, controle) => `
+    <div class="curseur">
+      <div class="curseur-tete">
+        <label for="cur_${id}">${nom}</label>
+        <span class="valeur" id="val_${id}"></span>
+        <button class="btn-info" type="button" aria-label="Explication : ${nom}" aria-expanded="false" aria-controls="info_${id}" onclick="basculerInfo('${id}', this)">ⓘ</button>
+      </div>
+      <p class="info-curseur cache" id="info_${id}">${aide}</p>
+      ${controle}
+    </div>`;
   if (e.choix) {
-    html += '<div class="curseur"><label>Milieux</label><select id="sel_' + e.choix.id + '">' +
-      e.choix.options.map(o => `<option value="${o[0]}">${o[1]}</option>`).join('') + '</select></div>';
+    html += bloc(e.choix.id, e.choix.nom, e.choix.aide,
+      `<select id="cur_${e.choix.id}">` + e.choix.options.map(o => `<option value="${o[0]}">${o[1]}</option>`).join('') + '</select>');
   }
   e.curseurs.forEach(c => {
-    html += `<div class="curseur"><label>${c.nom}<span id="val_${c.id}"></span></label>
-      <input type="range" id="cur_${c.id}" min="${c.min}" max="${c.max}" step="${c.pas}" value="${c.val}"></div>`;
+    html += bloc(c.id, c.nom, c.aide, `<input type="range" id="cur_${c.id}" min="${c.min}" max="${c.max}" step="${c.pas}" value="${c.val}">`);
   });
   if (expCourante === 'cinetique') {
-    html += '<button class="btn secondaire" onclick="lancerReaction()">▶️ Lancer la réaction (accéléré)</button> ' +
-            '<span class="note">Modèle simplifié à but pédagogique.</span>';
+    html += '<div class="actions-sim"><button class="btn btn-secondaire" id="btnReaction" onclick="lancerReaction()">▶️ Lancer la réaction (accéléré)</button>' +
+            '<span class="note">Une mesure est prise toutes les 10 minutes.</span></div>';
   }
   zone.innerHTML = html;
 
   e.curseurs.forEach(c => {
-    document.getElementById('cur_' + c.id).addEventListener('input', ev => {
+    $('cur_' + c.id).addEventListener('input', ev => {
+      if (c.id === 't') arreterAnimation();   // l'élève reprend la main sur le temps
       valeurs[c.id] = parseFloat(ev.target.value);
       dessiner();
     });
   });
   if (e.choix) {
-    document.getElementById('sel_' + e.choix.id).addEventListener('change', ev => {
-      valeurs[e.choix.id] = ev.target.value;
-      dessiner();
-    });
+    const sel = $('cur_' + e.choix.id);
+    sel.value = e.choix.val;
+    sel.addEventListener('change', ev => { valeurs[e.choix.id] = ev.target.value; dessiner(); });
   }
   dessiner();
+}
+
+function basculerInfo(id, bouton) {
+  const ouvert = bouton.getAttribute('aria-expanded') === 'true';
+  bouton.setAttribute('aria-expanded', String(!ouvert));
+  $('info_' + id).classList.toggle('cache', ouvert);
 }
 
 function dessiner() {
   const e = EXPERIENCES[expCourante];
   e.curseurs.forEach(c => {
-    const v = valeurs[c.id];
-    document.getElementById('val_' + c.id).textContent = (c.pas < 1 ? v.toFixed(2) : v) + ' ' + c.unite;
+    const decimales = (String(c.pas).split('.')[1] || '').length;
+    $('val_' + c.id).textContent = fr(valeurs[c.id], decimales) + ' ' + c.unite;
+    const curseur = $('cur_' + c.id);
+    curseur.style.setProperty('--pct', ((valeurs[c.id] - c.min) / (c.max - c.min) * 100) + '%');
+    curseur.setAttribute('aria-valuetext', fr(valeurs[c.id], decimales) + ' ' + c.unite);
   });
+  if (e.choix) $('val_' + e.choix.id).textContent = '';
   const calc = e.calcul(valeurs);
-  const cv = document.getElementById('canvasSim');
+  const cv = $('canvasSim');
   const ctx = cv.getContext('2d');
   ctx.clearRect(0, 0, cv.width, cv.height);
+  ctx.textAlign = 'left';
   if (expCourante === 'ohm') dessinerOhm(ctx, calc);
   if (expCourante === 'refraction') dessinerRefraction(ctx, calc);
   if (expCourante === 'cinetique') dessinerCinetique(ctx, calc);
 }
 
 function dessinerOhm(ctx, c) {
-  const U = valeurs.U;
-  ctx.lineWidth = 4; ctx.strokeStyle = '#1b1f2a';
+  const U = valeurs.U, R = valeurs.R;
+  ctx.lineWidth = 4; ctx.strokeStyle = ENCRE; ctx.lineJoin = 'round';
   ctx.strokeRect(80, 60, 440, 200);
-  // Générateur
-  ctx.fillStyle = '#fbfaf6'; ctx.fillRect(60, 120, 40, 80);
-  ctx.fillStyle = '#e8792b'; ctx.fillRect(66, 135, 28, 50);
-  ctx.fillStyle = '#fff'; ctx.font = 'bold 14px sans-serif'; ctx.fillText('+', 74, 150); ctx.fillText('−', 75, 178);
-  ctx.fillStyle = '#1b1f2a'; ctx.font = '15px sans-serif'; ctx.fillText('U = ' + U.toFixed(1) + ' V', 110, 165);
+  // Générateur (borne + en haut)
+  ctx.fillStyle = PAPIER; ctx.fillRect(60, 115, 40, 90);
+  ctx.fillStyle = ORANGE; ctx.fillRect(64, 125, 32, 70);
+  ctx.fillStyle = ENCRE; ctx.font = police(700, 22); ctx.textAlign = 'center';
+  ctx.fillText('+', 80, 150); ctx.fillText('−', 80, 186);
+  ctx.textAlign = 'left'; ctx.font = police(600, 22);
+  ctx.fillText('U = ' + fr(U, 1) + ' V', 112, 168);
   // Résistance
-  ctx.fillStyle = '#fbfaf6'; ctx.fillRect(240, 45, 120, 30);
-  ctx.strokeRect(250, 48, 100, 24);
-  ctx.fillStyle = '#1b1f2a'; ctx.fillText('R = ' + valeurs.R + ' Ω', 262, 100);
-  // Ampoule témoin (éclat proportionnel à la puissance)
-  const P = U * U / valeurs.R;
-  const eclat = Math.min(1, P / 3);
+  ctx.fillStyle = PAPIER; ctx.fillRect(235, 44, 130, 32);
+  ctx.strokeRect(245, 46, 110, 28);
+  ctx.fillStyle = ENCRE; ctx.textAlign = 'center';
+  ctx.fillText('R = ' + R + ' Ω', 300, 108);
+  // Sens conventionnel du courant : il sort par la borne + du générateur
+  if (c.I > 0) {
+    ctx.fillStyle = BLEU;
+    ctx.beginPath(); ctx.moveTo(166, 50); ctx.lineTo(186, 60); ctx.lineTo(166, 70); ctx.closePath(); ctx.fill();
+    ctx.font = police(700, 20); ctx.fillText('I', 174, 40);
+  }
+  // Lampe témoin : son éclat suit la puissance électrique P = U² / R
+  const eclat = Math.min(1, U * U / R / 3);
+  if (eclat > 0.05) {
+    ctx.beginPath(); ctx.arc(420, 260, 22 + 18 * eclat, 0, 2 * Math.PI);
+    ctx.fillStyle = `rgba(255, 210, 0, ${0.2 * eclat})`; ctx.fill();
+  }
   ctx.beginPath(); ctx.arc(420, 260, 22, 0, 2 * Math.PI);
   ctx.fillStyle = `rgba(255, ${200 + 55 * eclat}, 0, ${0.15 + 0.85 * eclat})`; ctx.fill(); ctx.stroke();
   // Ampèremètre
-  ctx.beginPath(); ctx.arc(520, 160, 26, 0, 2 * Math.PI);
+  ctx.beginPath(); ctx.arc(520, 160, 28, 0, 2 * Math.PI);
   ctx.fillStyle = '#fff'; ctx.fill(); ctx.stroke();
-  ctx.fillStyle = '#1b1f2a'; ctx.font = 'bold 18px sans-serif'; ctx.fillText('A', 513, 167);
-  // Électrons animés (vitesse proportionnelle à I)
-  document.getElementById('afficheur').innerHTML =
-    `<span class="afficheur">I = ${c.I.toFixed(1)} mA</span> <span class="note">lu sur l'ampèremètre</span>`;
+  ctx.fillStyle = ENCRE; ctx.font = police(700, 24); ctx.fillText('A', 520, 169);
+  ctx.textAlign = 'left';
+  $('afficheur').innerHTML = `<span class="afficheur">I = ${fr(c.I, 1)} mA</span><span class="note">soit ${fr(c.I / 1000, 3)} A, lu sur l'ampèremètre</span>`;
 }
 
 function dessinerRefraction(ctx, c) {
   const W = 600, H = 320, cx = W / 2, cy = H / 2;
   const [m1, m2] = valeurs.milieu.split('-');
-  const couleurs = { air: '#fbfaf6', eau: '#d6ecfb', verre: '#e4eef0' };
+  const couleurs = { air: '#FBFAF6', eau: '#D6ECFB', verre: '#DCEBEE' };
   ctx.fillStyle = couleurs[m1]; ctx.fillRect(0, 0, W, cy);
   ctx.fillStyle = couleurs[m2]; ctx.fillRect(0, cy, W, cy);
-  ctx.fillStyle = '#5b6272'; ctx.font = '14px sans-serif';
-  ctx.fillText(m1 + ' (n = ' + c.n1.toFixed(2) + ')', 12, 22);
-  ctx.fillText(m2 + ' (n = ' + c.n2.toFixed(2) + ')', 12, H - 12);
+  ctx.strokeStyle = '#9AA0AD'; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(0, cy); ctx.lineTo(W, cy); ctx.stroke();
+  ctx.fillStyle = '#3D4452'; ctx.font = police(600, 19);
+  ctx.fillText(NOMS_MILIEUX[m1] + ' (n = ' + fr(c.n1, 2) + ')', 14, 28);
+  ctx.fillText(NOMS_MILIEUX[m2] + ' (n = ' + fr(c.n2, 2) + ')', 14, H - 14);
   // Normale
-  ctx.setLineDash([6, 6]); ctx.strokeStyle = '#9aa0ad'; ctx.lineWidth = 1.5;
+  ctx.setLineDash([6, 6]);
   ctx.beginPath(); ctx.moveTo(cx, 10); ctx.lineTo(cx, H - 10); ctx.stroke(); ctx.setLineDash([]);
-  ctx.fillText('normale', cx + 6, 22);
+  ctx.font = police(500, 16); ctx.fillText('normale', cx + 8, 28);
   const L = 150, a1 = valeurs.i1 * Math.PI / 180;
   // Rayon incident
-  ctx.strokeStyle = '#d62828'; ctx.lineWidth = 4;
+  ctx.strokeStyle = '#D62828'; ctx.lineWidth = 4;
   ctx.beginPath(); ctx.moveTo(cx - L * Math.sin(a1), cy - L * Math.cos(a1)); ctx.lineTo(cx, cy); ctx.stroke();
-  // Rayon réfléchi (faible ou total)
-  ctx.strokeStyle = c.totale ? '#d62828' : 'rgba(214,40,40,0.25)';
+  // Rayon réfléchi (faible, ou total)
+  ctx.strokeStyle = c.totale ? '#D62828' : 'rgba(214, 40, 40, 0.25)';
   ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + L * Math.sin(a1), cy - L * Math.cos(a1)); ctx.stroke();
+  // Arc de l'angle i1
+  ctx.strokeStyle = ENCRE; ctx.lineWidth = 1.5; ctx.fillStyle = ENCRE; ctx.font = police(600, 17);
+  if (valeurs.i1 > 0) {
+    ctx.beginPath(); ctx.arc(cx, cy, 42, -Math.PI / 2 - a1, -Math.PI / 2); ctx.stroke();
+    const m = -Math.PI / 2 - a1 / 2;
+    ctx.fillText('i1', cx + 62 * Math.cos(m) - 8, cy + 62 * Math.sin(m) + 6);
+  }
   let texte;
   if (!c.totale) {
     const a2 = c.i2 * Math.PI / 180;
-    ctx.strokeStyle = '#d62828';
+    ctx.strokeStyle = '#D62828'; ctx.lineWidth = 4;
     ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + L * Math.sin(a2), cy + L * Math.cos(a2)); ctx.stroke();
-    texte = `i1 = ${valeurs.i1}° &nbsp; i2 = ${c.i2.toFixed(1)}°`;
+    if (c.i2 > 0) {
+      ctx.strokeStyle = ENCRE; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.arc(cx, cy, 42, Math.PI / 2 - a2, Math.PI / 2); ctx.stroke();
+      const m = Math.PI / 2 - a2 / 2;
+      ctx.fillText('i2', cx + 62 * Math.cos(m) - 8, cy + 62 * Math.sin(m) + 6);
+    }
+    texte = `i1 = ${valeurs.i1}° · i2 = ${fr(c.i2, 1)}°`;
   } else {
-    texte = `i1 = ${valeurs.i1}° &nbsp; RÉFLEXION TOTALE`;
+    ctx.fillStyle = '#B91C1C'; ctx.font = police(700, 20);
+    ctx.fillText('Réflexion totale !', cx + 20, cy + 60);
+    texte = `i1 = ${valeurs.i1}° · réflexion totale`;
   }
-  document.getElementById('afficheur').innerHTML = `<span class="afficheur">${texte}</span>`;
+  $('afficheur').innerHTML = `<span class="afficheur">${texte}</span>`;
 }
 
 function dessinerCinetique(ctx, c) {
-  const W = 600, H = 320;
   // Bécher
-  ctx.strokeStyle = '#1b1f2a'; ctx.lineWidth = 3;
+  ctx.strokeStyle = ENCRE; ctx.lineWidth = 3;
   ctx.beginPath(); ctx.moveTo(60, 60); ctx.lineTo(60, 280); ctx.lineTo(240, 280); ctx.lineTo(240, 60); ctx.stroke();
   const avancement = c.sigma / (1000 * valeurs.C);
   ctx.fillStyle = `rgb(${200 - 60 * avancement}, ${225 - 40 * avancement}, 250)`;
   ctx.fillRect(62, 120, 176, 158);
-  // Ions qui apparaissent
-  ctx.fillStyle = '#2563c9';
+  // Ions qui apparaissent au fil de la réaction
+  ctx.fillStyle = BLEU;
   const nb = Math.round(40 * avancement);
   for (let i = 0; i < nb; i++) {
     const x = 75 + (i * 37) % 150, y = 135 + (i * 53) % 130;
     ctx.beginPath(); ctx.arc(x, y, 4, 0, 2 * Math.PI); ctx.fill();
   }
-  ctx.fillStyle = '#1b1f2a'; ctx.font = '14px sans-serif';
-  ctx.fillText('T = ' + valeurs.T + ' °C', 70, 110);
+  ctx.fillStyle = ENCRE; ctx.font = police(600, 20);
+  ctx.fillText('T = ' + valeurs.T + ' °C', 70, 104);
   // Conductimètre
-  ctx.fillStyle = '#1b1f2a'; ctx.fillRect(300, 100, 240, 110);
-  ctx.fillStyle = '#7CFFB2'; ctx.font = 'bold 26px monospace';
-  ctx.fillText(c.sigma.toFixed(1) + ' u.a.', 320, 150);
-  ctx.font = '13px monospace'; ctx.fillText('conductimètre', 320, 185);
-  ctx.strokeStyle = '#1b1f2a'; ctx.beginPath(); ctx.moveTo(200, 130); ctx.lineTo(300, 155); ctx.stroke();
-  document.getElementById('afficheur').innerHTML =
-    `<span class="afficheur">t = ${valeurs.t} min &nbsp; σ = ${c.sigma.toFixed(1)}</span>`;
+  ctx.fillStyle = ENCRE; ctx.fillRect(300, 100, 250, 110);
+  ctx.fillStyle = '#7CFFB2'; ctx.font = 'bold 30px ui-monospace, Consolas, monospace';
+  ctx.fillText(fr(c.sigma, 1) + ' u.a.', 320, 155);
+  ctx.font = '15px ui-monospace, Consolas, monospace'; ctx.fillText('conductimètre', 320, 190);
+  ctx.strokeStyle = ENCRE; ctx.beginPath(); ctx.moveTo(200, 130); ctx.lineTo(300, 155); ctx.stroke();
+  $('afficheur').innerHTML = `<span class="afficheur">t = ${valeurs.t} min · σ = ${fr(c.sigma, 1)} u.a.</span>`;
 }
 
 function lancerReaction() {
-  arreterAnimation();
-  valeurs.t = 0;
+  if (animCinetique) { arreterAnimation(); return; }
+  valeurs.t = 0; $('cur_t').value = 0; dessiner();
+  mesurer(true);
+  $('btnReaction').textContent = '⏹ Arrêter la réaction';
   animCinetique = setInterval(() => {
     valeurs.t += 1;
-    document.getElementById('cur_t').value = valeurs.t;
+    $('cur_t').value = valeurs.t;
     dessiner();
     if (valeurs.t % 10 === 0) mesurer(true);
     if (valeurs.t >= 120) arreterAnimation();
   }, 80);
 }
-function arreterAnimation() { if (animCinetique) { clearInterval(animCinetique); animCinetique = null; } }
+function arreterAnimation() {
+  if (animCinetique) { clearInterval(animCinetique); animCinetique = null; }
+  const b = $('btnReaction'); if (b) b.textContent = '▶️ Lancer la réaction (accéléré)';
+}
 
 /* =========================================================
    5. MESURES ET GRAPHIQUE
    ========================================================= */
-function mesurer(silencieux) {
+function mesurer(automatique) {
   const e = EXPERIENCES[expCourante];
   const c = e.calcul(valeurs);
   mesures.push({ valeurs: { ...valeurs }, calcul: c, ligne: e.ligne(valeurs, c) });
-  majTable();
-  majGraphe();
+  majTable(true); majGraphe(); majEtapes();
+  if (!automatique) {
+    annoncer('Mesure numéro ' + mesures.length + ' ajoutée au tableau.');
+    if (!predictionFaite && !rappelPrediction) {
+      rappelPrediction = true;
+      ajouterBulle('prof', "Petit conseil : écris d'abord ta prédiction dans le champ ci-dessous. C'est en comparant ta prédiction au résultat qu'on apprend le mieux !");
+    }
+  }
 }
-function viderMesures() { mesures = []; majTable(); majGraphe(); }
+function viderMesures() {
+  if (!mesures.length) return;
+  if (!confirm('Effacer toutes tes mesures ?')) return;
+  mesures = []; majTable(); majGraphe(); majEtapes();
+}
 
-function majTable() {
+function majTable(nouvelle) {
   const e = EXPERIENCES[expCourante];
-  let html = '<tr><th>#</th>' + e.colonnes.map(c => `<th>${c}</th>`).join('') + '</tr>';
-  mesures.forEach((m, i) => html += `<tr><td>${i + 1}</td>` + m.ligne.map(x => `<td>${x}</td>`).join('') + '</tr>');
-  if (!mesures.length) html += `<tr><td colspan="${e.colonnes.length + 1}" class="note">Règle les curseurs puis appuie sur « Mesurer ».</td></tr>`;
-  document.getElementById('tableMesures').innerHTML = html;
+  let html = '<thead><tr><th>#</th>' + e.colonnes.map(c => `<th>${c}</th>`).join('') + '</tr></thead><tbody>';
+  mesures.forEach((m, i) => {
+    const classe = nouvelle && i === mesures.length - 1 ? ' class="nouvelle"' : '';
+    html += `<tr${classe}><td>${i + 1}</td>` + m.ligne.map(x => `<td>${x}</td>`).join('') + '</tr>';
+  });
+  if (!mesures.length) html += `<tr><td colspan="${e.colonnes.length + 1}" class="vide">Aucune mesure pour l'instant. Règle les curseurs, puis appuie sur « Mesurer ».</td></tr>`;
+  $('tableMesures').innerHTML = html + '</tbody>';
+  const boite = $('tableMesures').parentElement;
+  if (nouvelle) boite.scrollTop = boite.scrollHeight;
 }
 
 function initGraphe() {
   const e = EXPERIENCES[expCourante];
-  if (graphe) graphe.destroy();
-  if (typeof Chart === 'undefined') return;
-  graphe = new Chart(document.getElementById('graphe'), {
+  if (graphe) { graphe.destroy(); graphe = null; }
+  if (typeof Chart === 'undefined') {
+    $('grapheVide').textContent = "Le graphique n'a pas pu se charger (connexion). Tes mesures restent dans le tableau.";
+    $('grapheVide').classList.remove('cache');
+    return;
+  }
+  $('grapheVide').textContent = 'Ton graphique apparaîtra ici après ta première mesure.';
+  Chart.defaults.font.family = 'Inter, system-ui, sans-serif';
+  graphe = new Chart($('graphe'), {
     type: 'scatter',
-    data: { datasets: [{ label: e.axeY + ' en fonction de ' + e.axeX, data: [], backgroundColor: '#0f8a5f', showLine: false, pointRadius: 5 }] },
-    options: { animation: false, scales: { x: { title: { display: true, text: e.axeX } }, y: { title: { display: true, text: e.axeY } } } }
+    data: { datasets: [] },
+    options: {
+      responsive: true, maintainAspectRatio: false, animation: false, locale: 'fr-FR',
+      plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8 } } },
+      scales: {
+        x: { beginAtZero: true, title: { display: true, text: e.axeX } },
+        y: { beginAtZero: true, title: { display: true, text: e.axeY } }
+      }
+    }
   });
+  majGraphe();
 }
+
+// Les points sont regroupés en séries (une couleur par réglage), sinon le graphique serait illisible
 function majGraphe() {
-  if (!graphe) return;
   const e = EXPERIENCES[expCourante];
-  graphe.data.datasets[0].data = mesures.map(m => e.point(m.valeurs, m.calcul)).filter(Boolean);
+  const series = new Map();
+  mesures.forEach(m => {
+    const p = e.point(m.valeurs, m.calcul);
+    if (!p) return;
+    const nom = e.serie(m.valeurs);
+    if (!series.has(nom)) series.set(nom, []);
+    series.get(nom).push(p);
+  });
+  $('grapheVide').classList.toggle('cache', series.size > 0 && !!graphe);
+  if (!graphe) return;
+  graphe.data.datasets = [...series].map(([nom, points], i) => {
+    const couleur = COULEURS_SERIES[i % COULEURS_SERIES.length];
+    return { label: nom, data: points.sort((a, b) => a.x - b.x), backgroundColor: couleur, borderColor: couleur,
+             showLine: !!e.relier, pointRadius: 5, pointHoverRadius: 7 };
+  });
   graphe.update();
 }
 
 /* =========================================================
-   6. APPELS À L'IA
+   6. APPELS À L'IA (via notre serveur /api/ia, la clé reste cachée)
    ========================================================= */
+const MESSAGES_ERREUR = {
+  horsligne: "Tu sembles hors connexion. Vérifie ta connexion internet, puis réessaie.",
+  delai: "Le professeur met trop de temps à répondre. Réessaie dans un instant.",
+  surcharge: "Le professeur est très demandé en ce moment. Réessaie dans un instant.",
+  reseau: "Impossible de joindre le professeur. Vérifie ta connexion, puis réessaie.",
+  lecture: "Je n'ai pas bien compris ta demande. Reformule-la en quelques mots.",
+  serveur: "Le professeur n'a pas pu répondre. Réessaie dans un instant."
+};
+const messageErreur = code => MESSAGES_ERREUR[code] || MESSAGES_ERREUR.serveur;
+
 async function appelIA(mode, texte, image, contexte) {
-  const r = await fetch('/api/ia', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ mode, texte, image, contexte })
-  });
-  const data = await r.json();
-  if (!r.ok) throw new Error((data.erreur || 'Erreur') + ' ' + (data.detail ? JSON.stringify(data.detail) : ''));
+  if (navigator.onLine === false) throw new Error('horsligne');
+  const ctrl = new AbortController();
+  const minuteur = setTimeout(() => ctrl.abort(), 60000);
+  let r, data;
+  try {
+    r = await fetch('/api/ia', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ mode, texte, image, contexte }),
+      signal: ctrl.signal
+    });
+    data = await r.json().catch(() => ({}));
+  } catch (e) {
+    console.error('Appel IA impossible :', e);
+    throw new Error(e.name === 'AbortError' ? 'delai' : 'reseau');
+  } finally { clearTimeout(minuteur); }
+  if (!r.ok || typeof data.reponse !== 'string' || !data.reponse.trim()) {
+    console.error('Erreur IA', r.status, data);   // le détail technique reste dans la console
+    throw new Error(r.status === 502 || r.status === 504 ? 'surcharge' : 'serveur');
+  }
   return data.reponse;
 }
 
 // A. Comprendre la demande (texte, voix ou photo)
 async function comprendre() {
-  const texte = document.getElementById('texteAccueil').value.trim();
-  const msg = document.getElementById('msgAccueil');
-  if (!texte && !photoBase64) { msg.textContent = "Écris, dicte ou prends une photo de ta leçon d'abord."; return; }
-  const btn = document.getElementById('btnComprendre');
-  btn.disabled = true; msg.textContent = '🔎 Le professeur lit ta demande…';
+  const champ = $('texteAccueil'), msg = $('msgAccueil'), btn = $('btnComprendre');
+  if (btn.disabled) return;
+  const texte = champ.value.trim();
+  if (!texte && !photoBase64) { msg.textContent = "Écris ou dicte ta demande, ou prends ta leçon en photo."; champ.focus(); return; }
+  btn.disabled = true;
+  msg.innerHTML = 'Le professeur lit ta demande<span class="points" aria-hidden="true"><i></i><i></i><i></i></span>';
   try {
     const rep = await appelIA('comprendre', texte, photoBase64);
-    const json = JSON.parse(rep.replace(/```json|```/g, '').trim());
+    let json;
+    try { json = JSON.parse(rep.replace(/```json|```/g, '').trim()); }
+    catch (e) { console.error('Réponse IA illisible :', rep); throw new Error('lecture'); }
     if (json.experience && EXPERIENCES[json.experience]) {
-      msg.textContent = '';
+      msg.textContent = ''; champ.value = ''; effacerPhoto();
       ouvrirLabo(json.experience, json);
     } else {
-      msg.textContent = json.message_si_aucune || "Je n'ai pas d'expérience pour ce sujet. Essaie : loi d'Ohm, réfraction ou cinétique.";
+      msg.textContent = (typeof json.message_si_aucune === 'string' && json.message_si_aucune.trim()) ||
+        "Je n'ai pas encore d'expérience sur ce sujet. Choisis la loi d'Ohm, la réfraction ou la cinétique chimique.";
     }
   } catch (e) {
-    msg.textContent = "⚠️ Problème de connexion à l'IA. Choisis une expérience ci-dessous. (" + e.message.slice(0, 120) + ")";
+    msg.textContent = messageErreur(e.message) + " Tu peux aussi choisir une expérience ci-dessus.";
   } finally { btn.disabled = false; }
 }
 
 // B. Le professeur de TP
-async function parlerAuProf() {
-  const champ = document.getElementById('texteProf');
+function parlerAuProf() {
+  if (profOccupe) return;
+  const champ = $('texteProf');
   const texte = champ.value.trim();
-  if (!texte) return;
+  if (!texte) { champ.focus(); return; }
   ajouterBulle('eleve', texte);
   champ.value = '';
   const etaitPrediction = !predictionFaite;
@@ -496,122 +1133,340 @@ async function parlerAuProf() {
     question_posee: questionPrediction,
     etape: etaitPrediction ? "L'élève répond à question_posee : c'est sa PRÉDICTION. Dis-lui si elle est juste ou non, puis dis-lui quoi manipuler pour la vérifier." : "L'élève expérimente.",
     prediction_faite: true,
-    valeurs_curseurs: valeurs,
+    valeurs_curseurs: { ...valeurs },
     resultat_actuel: EXPERIENCES[expCourante].calcul(valeurs),
     mesures: mesures.map(m => m.ligne)
   };
-  predictionFaite = true; majBadge();
-  const btn = document.getElementById('btnProf'); btn.disabled = true;
-  const attente = ajouterBulle('prof', '…');
+  predictionFaite = true; majEtapes();
+  envoyerAuProf(texte, contexte);
+}
+
+async function envoyerAuProf(texte, contexte) {
+  const jeton = jetonTP;
+  profOccupe = true; $('btnProf').disabled = true;
+  const attente = bulleReflexion();
   try {
     const rep = await appelIA('prof', texte, null, contexte);
-    attente.textContent = rep;
-    parler(rep);
+    if (jeton !== jetonTP) return;                 // l'élève a changé de TP entre-temps
+    attente.remove();
+    ajouterBulle('prof', rep);
   } catch (e) {
-    attente.textContent = "Je n'arrive pas à me connecter. Continue à manipuler et note tes mesures !";
-  } finally { btn.disabled = false; }
+    if (jeton !== jetonTP) return;
+    attente.remove();
+    const b = ajouterBulle('prof', messageErreur(e.message) + ' En attendant, continue à manipuler et à noter tes mesures.', { erreur: true });
+    const bouton = document.createElement('button');
+    bouton.className = 'mini-btn'; bouton.type = 'button'; bouton.textContent = '↻ Réessayer';
+    bouton.onclick = () => { if (profOccupe) return; b.remove(); envoyerAuProf(texte, contexte); };
+    b.appendChild(bouton);
+  } finally { profOccupe = false; $('btnProf').disabled = false; }
 }
 
 // C. Le compte rendu
 async function genererRapport() {
-  const zone = document.getElementById('rapport');
-  if (mesures.length < 3) { zone.innerHTML = '<p class="note">Fais au moins 3 mesures avant de générer le compte rendu.</p>'; return; }
-  const btn = document.getElementById('btnRapport'); btn.disabled = true;
-  zone.innerHTML = '<p class="chargement">✍️ Rédaction du compte rendu…</p>';
+  if (rapportOccupe) return;
+  const zone = $('rapport');
+  const nb = mesures.length;
+  if (nb < 3) {
+    zone.innerHTML = `<p class="alerte">Il te faut au moins 3 mesures pour un compte rendu sérieux (tu en as ${nb}). Fais encore ${3 - nb} mesure${3 - nb > 1 ? 's' : ''} avec le bouton « Mesurer ».</p>`;
+    return;
+  }
+  const jeton = jetonTP;
+  rapportOccupe = true; $('btnRapport').disabled = true;
+  zone.innerHTML = '<p class="message-attente">Le professeur rédige ton compte rendu<span class="points" aria-hidden="true"><i></i><i></i><i></i></span></p>';
   try {
     const e = EXPERIENCES[expCourante];
     const rep = await appelIA('rapport', 'Rédige le compte rendu.', null, {
       experience: e.titre, objectif: e.objectif, colonnes: e.colonnes, mesures: mesures.map(m => m.ligne)
     });
-    zone.innerHTML = markdownSimple(rep) +
-      '<button class="btn secondaire" style="margin-top:10px" onclick="window.print()">🖨️ Imprimer / PDF</button>';
-  } catch (e) {
-    zone.innerHTML = '<p class="note">⚠️ Impossible de générer le compte rendu pour le moment.</p>';
-  } finally { btn.disabled = false; }
+    if (jeton !== jetonTP) return;
+    zone.innerHTML = feuilleRapport(rep) +
+      '<div class="ligne-actions no-print">' +
+      '<button class="btn" onclick="window.print()">🖨️ Imprimer / PDF</button>' +
+      '<button class="btn btn-contour" onclick="genererRapport()">↻ Régénérer</button></div>';
+    zone.scrollIntoView({ behavior: mouvementReduit() ? 'auto' : 'smooth', block: 'start' });
+  } catch (err) {
+    if (jeton !== jetonTP) return;
+    zone.innerHTML = `<p class="alerte">${messageErreur(err.message)}</p>` +
+      '<div class="ligne-actions"><button class="btn btn-contour" onclick="genererRapport()">↻ Réessayer</button></div>';
+  } finally { rapportOccupe = false; $('btnRapport').disabled = false; }
+}
+
+function feuilleRapport(markdown) {
+  const e = EXPERIENCES[expCourante];
+  const date = new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+  const image = graphe && graphe.data.datasets.length ? graphe.toBase64Image('image/png', 1) : '';
+  return `<article class="feuille" id="feuilleRapport">
+    <div class="feuille-tete"><svg class="logo" aria-hidden="true"><use href="#logo"/></svg>
+      <span class="t">LaboPoche · Compte rendu de TP</span><span class="date">${date}</span></div>
+    <h2>${echap($('titreTP').textContent)}</h2>
+    <p class="feuille-eleve">Nom : ………………………………………  Classe : ………………</p>
+    ${markdownSimple(markdown)}
+    ${image ? `<figure><figcaption>Graphique : ${echap(e.axeY)} en fonction de ${echap(e.axeX)}</figcaption><img src="${image}" alt="Graphique des mesures"></figure>` : ''}
+    <p class="note">Mesures obtenues avec une simulation pédagogique de LaboPoche (modèle simplifié).</p>
+  </article>`;
 }
 
 /* =========================================================
-   7. UTILITAIRES : chat, voix, photo, markdown
+   7. VOIX : le prof parle (synthèse vocale), l'élève dicte (reconnaissance vocale)
    ========================================================= */
-function ajouterBulle(qui, texte) {
+const syntheseOk = 'speechSynthesis' in window && 'SpeechSynthesisUtterance' in window;
+let voixFr = null, idParole = 0;
+function choisirVoix() {
+  if (!syntheseOk) return;
+  const voix = speechSynthesis.getVoices();
+  voixFr = voix.find(v => v.lang === 'fr-FR') || voix.find(v => v.lang && v.lang.startsWith('fr')) || null;
+}
+
+// force = true quand l'élève demande lui-même à réécouter (même si la voix automatique est coupée)
+function parler(texte, force) {
+  if (!syntheseOk || !texte || (!voixActive && !force)) return;
+  speechSynthesis.cancel();
+  const id = ++idParole;
+  const u = new SpeechSynthesisUtterance(texte);
+  u.lang = 'fr-FR'; u.rate = 1;
+  if (voixFr) u.voice = voixFr;
+  u.onstart = () => { if (id === idParole) etatParole(true); };
+  u.onend = u.onerror = () => { if (id === idParole) etatParole(false); };
+  speechSynthesis.speak(u);
+}
+function arreterVoix() {
+  idParole++;
+  if (syntheseOk) speechSynthesis.cancel();
+  etatParole(false);
+}
+function etatParole(parle) {
+  $('btnStop').classList.toggle('cache', !parle);
+  $('avatarProf').classList.toggle('parle', parle);
+  $('etatProf').textContent = parle ? 'parle…' : '';
+}
+function reecouterQuestion() { if (derniereQuestionProf) parler(derniereQuestionProf, true); }
+
+function basculerVoix() {
+  voixActive = !voixActive;
+  ecrireLS('labopoche_voix', voixActive ? 'oui' : 'non');
+  majBoutonVoix();
+  if (!voixActive) arreterVoix();
+}
+function majBoutonVoix() {
+  const b = $('btnVoix');
+  b.textContent = voixActive ? '🔊' : '🔇';
+  b.setAttribute('aria-pressed', String(voixActive));
+  b.setAttribute('aria-label', voixActive ? 'Voix du professeur activée. Appuie pour la couper.' : 'Voix du professeur coupée. Appuie pour la remettre.');
+  b.title = voixActive ? 'Couper la voix du professeur' : 'Remettre la voix du professeur';
+}
+
+// Dictée vocale (Chrome, Android, Edge). Sinon, message clair : on écrit.
+function brancherMicro(idBouton, idChamp, idStatut, apres) {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const bouton = $(idBouton), statut = $(idStatut), champ = $(idChamp);
+  const PRET = 'Touche 🎤 pour parler, ou écris ta réponse.';
+  if (!SR) {
+    bouton.classList.add('indispo');
+    bouton.setAttribute('aria-disabled', 'true');
+    bouton.setAttribute('aria-label', 'Dictée vocale non disponible sur ce navigateur');
+    statut.textContent = "La dictée vocale n'est pas disponible sur ce navigateur : écris ta réponse dans le champ.";
+    bouton.onclick = () => champ.focus();
+    return;
+  }
+  statut.textContent = PRET;
+  let rec = null;
+  bouton.onclick = () => {
+    if (rec) { rec.stop(); return; }              // deuxième appui : on arrête d'écouter
+    arreterVoix();                                // sinon le micro entendrait la voix du prof
+    rec = new SR(); rec.lang = 'fr-FR'; rec.interimResults = false; rec.maxAlternatives = 1;
+    let compris = false, erreur = '';
+    bouton.classList.add('ecoute'); bouton.setAttribute('aria-label', "Arrêter l'écoute");
+    statut.textContent = "🔴 J'écoute… parle maintenant.";
+    rec.onresult = ev => { compris = true; champ.value = ev.results[0][0].transcript; };
+    rec.onerror = ev => { erreur = ev.error; };
+    rec.onend = () => {
+      rec = null;
+      bouton.classList.remove('ecoute'); bouton.setAttribute('aria-label', 'Dicter ta réponse');
+      if (compris) { statut.textContent = PRET; if (apres) apres(); return; }
+      statut.textContent =
+        erreur === 'not-allowed' || erreur === 'service-not-allowed' ? "Autorise l'accès au micro dans ton navigateur, ou écris ta réponse." :
+        erreur === 'no-speech' ? "Je ne t'ai pas entendu. Touche 🎤 et réessaie, ou écris ta réponse." :
+        erreur === 'network' ? "La dictée a besoin d'internet. Écris ta réponse dans le champ." : PRET;
+    };
+    try { rec.start(); } catch (e) { console.error(e); rec = null; bouton.classList.remove('ecoute'); statut.textContent = PRET; }
+  };
+}
+
+/* =========================================================
+   8. VISITE GUIDÉE (3 bulles, une seule fois, relançable avec « ? Aide »)
+   ========================================================= */
+const CLE_VISITE = 'labopoche_visite_vue';
+const VISITES = {
+  labo: [
+    { cible: '#carteSim', titre: 'La simulation', texte: "Bouge les curseurs pour changer les réglages : le dessin et l'afficheur se mettent à jour tout de suite. Touche ⓘ pour savoir à quoi sert chaque réglage." },
+    { cible: '#btnMesurer', titre: 'Le bouton Mesurer', texte: "Quand ton réglage est prêt, appuie sur « Mesurer » : la mesure s'ajoute au tableau et au graphique. Fais-en au moins 3." },
+    { cible: '#carteProf', titre: 'Ton professeur', texte: "Commence par écrire ou dicter ta prédiction. Le professeur te guide sans te donner la réponse. À la fin, génère ton compte rendu." }
+  ],
+  accueil: [
+    { cible: '#comment', titre: 'Comment ça marche', texte: "Un TP se fait en 3 étapes : tu prédis, tu manipules, puis tu comprends avec l'aide du professeur IA." },
+    { cible: '#grilleExp', titre: 'Choisis une expérience', texte: "Touche une carte pour ouvrir le TP. Le niveau scolaire est indiqué en bleu." },
+    { cible: '#carteDemande', titre: 'Ou demande au professeur', texte: "Écris, dicte ou prends en photo ta leçon : le professeur choisit l'expérience qui correspond." }
+  ]
+};
+let visite = null;
+
+function lancerVisite(force) {
+  const ecran = $('ecranLabo').classList.contains('cache') ? 'accueil' : 'labo';
+  if (!force && (ecran !== 'labo' || lireLS(CLE_VISITE))) return;
+  if (document.body.classList.contains('mode-classe')) return;
+  finirVisite();
+  visite = { ecran, etapes: VISITES[ecran], i: 0 };
+  $('visite').classList.remove('cache');
+  afficherEtapeVisite();
+}
+function afficherEtapeVisite() {
+  document.querySelectorAll('.visite-cible').forEach(el => el.classList.remove('visite-cible'));
+  const etape = visite.etapes[visite.i];
+  const cible = document.querySelector(etape.cible);
+  if (cible) {
+    cible.classList.add('visite-cible');
+    cible.scrollIntoView({ behavior: mouvementReduit() ? 'auto' : 'smooth', block: 'start' });
+  }
+  $('visiteCompteur').textContent = `Étape ${visite.i + 1} sur ${visite.etapes.length}`;
+  $('visiteTitre').textContent = etape.titre;
+  $('visiteTexte').textContent = etape.texte;
+  $('visiteSuivant').textContent = visite.i === visite.etapes.length - 1 ? "J'ai compris" : 'Suivant';
+  $('visiteSuivant').focus({ preventScroll: true });
+}
+function etapeVisite(pas) {
+  if (!visite) return;
+  visite.i += pas;
+  if (visite.i >= visite.etapes.length) finirVisite(); else afficherEtapeVisite();
+}
+function finirVisite() {
+  if (!visite) return;
+  if (visite.ecran === 'labo') ecrireLS(CLE_VISITE, '1');
+  document.querySelectorAll('.visite-cible').forEach(el => el.classList.remove('visite-cible'));
+  $('visite').classList.add('cache');
+  visite = null;
+}
+
+/* =========================================================
+   9. UTILITAIRES : bulles du chat, photo, markdown
+   ========================================================= */
+function ajouterBulle(qui, texte, options) {
+  options = options || {};
   const d = document.createElement('div');
-  d.className = 'bulle ' + qui; d.textContent = texte;
-  const chat = document.getElementById('chat');
+  d.className = 'bulle ' + qui + (options.erreur ? ' erreur' : '');
+  const p = document.createElement('p'); p.textContent = texte; d.appendChild(p);
+  if (qui === 'prof' && !options.erreur) {
+    derniereQuestionProf = texte;
+    $('btnReecouterQ').disabled = false;
+    if (syntheseOk) {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'mini-btn'; b.textContent = '🔊 Réécouter';
+      b.setAttribute('aria-label', 'Réécouter ce message du professeur');
+      b.onclick = () => parler(texte, true);
+      d.appendChild(b);
+    }
+  }
+  const chat = $('chat');
   chat.appendChild(d); chat.scrollTop = chat.scrollHeight;
-  if (qui === 'prof' && texte !== '…') parler(texte);
+  if (qui === 'prof' && !options.erreur) parler(texte);
   return d;
 }
 
-function parler(texte) {
-  if (!voixActive || !window.speechSynthesis) return;
-  speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(texte);
-  u.lang = 'fr-FR'; u.rate = 1.02;
-  speechSynthesis.speak(u);
+function bulleReflexion() {
+  const d = document.createElement('div');
+  d.className = 'bulle prof';
+  d.innerHTML = '<p>Le professeur réfléchit<span class="points" aria-hidden="true"><i></i><i></i><i></i></span></p>';
+  const chat = $('chat');
+  chat.appendChild(d); chat.scrollTop = chat.scrollHeight;
+  return d;
 }
-function basculerVoix() {
-  voixActive = !voixActive;
-  document.getElementById('btnVoix').textContent = '🔊 Voix : ' + (voixActive ? 'oui' : 'non');
-  if (!voixActive && window.speechSynthesis) speechSynthesis.cancel();
-}
-
-// Dictée vocale (Chrome / Android). Sinon, on garde la saisie texte.
-function brancherMicro(idBouton, idChamp, apres) {
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  const bouton = document.getElementById(idBouton);
-  if (!SR) { bouton.onclick = () => alert("La dictée n'est pas disponible sur ce navigateur. Écris ta phrase."); return; }
-  bouton.onclick = () => {
-    const rec = new SR(); rec.lang = 'fr-FR'; rec.interimResults = false;
-    bouton.classList.add('ecoute');
-    rec.onresult = ev => { document.getElementById(idChamp).value = ev.results[0][0].transcript; apres && apres(); };
-    rec.onend = () => bouton.classList.remove('ecoute');
-    rec.onerror = () => bouton.classList.remove('ecoute');
-    rec.start();
-  };
-}
-brancherMicro('microAccueil', 'texteAccueil', comprendre);
-brancherMicro('microProf', 'texteProf', parlerAuProf);
-document.getElementById('texteAccueil').addEventListener('keydown', e => { if (e.key === 'Enter') comprendre(); });
-document.getElementById('texteProf').addEventListener('keydown', e => { if (e.key === 'Enter') parlerAuProf(); });
 
 // Photo : réduite à 1024 px pour un envoi rapide
-document.getElementById('photoLecon').addEventListener('change', ev => {
-  const f = ev.target.files[0]; if (!f) return;
+function effacerPhoto() { photoBase64 = null; $('infoPhoto').textContent = ''; }
+$('photoLecon').addEventListener('change', ev => {
+  const f = ev.target.files[0];
+  ev.target.value = '';                            // permet de reprendre la même photo
+  if (!f) return;
+  const url = URL.createObjectURL(f);
   const img = new Image();
   img.onload = () => {
     const echelle = Math.min(1, 1024 / Math.max(img.width, img.height));
     const c = document.createElement('canvas');
-    c.width = img.width * echelle; c.height = img.height * echelle;
+    c.width = Math.round(img.width * echelle); c.height = Math.round(img.height * echelle);
     c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
     photoBase64 = c.toDataURL('image/jpeg', 0.8).split(',')[1];
-    document.getElementById('infoPhoto').textContent = '✅ Photo prête';
+    URL.revokeObjectURL(url);
+    $('infoPhoto').textContent = '✅ Photo prête';
     comprendre();
   };
-  img.src = URL.createObjectURL(f);
+  img.onerror = () => {
+    URL.revokeObjectURL(url);
+    $('msgAccueil').textContent = "Cette image n'a pas pu être lue. Essaie une autre photo (JPEG ou PNG).";
+  };
+  img.src = url;
 });
 
-// Markdown minimal : titres, gras, listes, tableaux
+// Markdown minimal : titres, gras, listes, tableaux (le texte est échappé d'abord : pas d'injection HTML)
 function markdownSimple(md) {
-  const echap = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   const lignes = echap(md).split('\n');
-  let html = '', table = [];
+  let html = '', table = [], liste = [];
   const viderTable = () => {
     if (!table.length) return;
-    const rangs = table.filter(l => !/^\s*\|?\s*:?-{2,}/.test(l));
-    html += '<table>' + rangs.map((l, i) => '<tr>' + l.replace(/^\||\|$/g, '').split('|')
-      .map(x => i === 0 ? `<th>${x.trim()}</th>` : `<td>${x.trim()}</td>`).join('') + '</tr>').join('') + '</table>';
+    const rangs = table.filter(l => !/^\|?[\s:|-]+\|?$/.test(l) || !l.includes('-'));
+    html += '<div class="table-defile"><table>' + rangs.map((l, i) => '<tr>' + l.replace(/^\||\|$/g, '').split('|')
+      .map(x => i === 0 ? `<th>${x.trim()}</th>` : `<td>${x.trim()}</td>`).join('') + '</tr>').join('') + '</table></div>';
     table = [];
   };
+  const viderListe = () => { if (liste.length) { html += '<ul>' + liste.map(x => `<li>${x}</li>`).join('') + '</ul>'; liste = []; } };
   lignes.forEach(l => {
-    if (l.trim().startsWith('|')) { table.push(l.trim()); return; }
+    if (l.trim().startsWith('|')) { viderListe(); table.push(l.trim()); return; }
     viderTable();
     l = l.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
-    if (/^#{1,3} /.test(l)) html += '<h3>' + l.replace(/^#+ /, '') + '</h3>';
-    else if (/^\s*[-*] /.test(l)) html += '<li>' + l.replace(/^\s*[-*] /, '') + '</li>';
+    if (/^\s*[-*] /.test(l)) { liste.push(l.replace(/^\s*[-*] /, '')); return; }
+    viderListe();
+    if (/^#{1,4} /.test(l)) html += '<h3>' + l.replace(/^#+ /, '') + '</h3>';
     else if (l.trim()) html += '<p>' + l + '</p>';
   });
-  viderTable();
+  viderTable(); viderListe();
   return html;
+}
+
+/* =========================================================
+   10. DÉMARRAGE
+   ========================================================= */
+voixActive = lireLS('labopoche_voix') !== 'non';
+if (syntheseOk) {
+  choisirVoix();
+  speechSynthesis.addEventListener && speechSynthesis.addEventListener('voiceschanged', choisirVoix);
+  majBoutonVoix();
+} else {
+  $('btnVoix').classList.add('cache');
+  $('btnReecouterQ').classList.add('cache');
+}
+brancherMicro('microAccueil', 'texteAccueil', 'statutMicroAccueil', comprendre);
+brancherMicro('microProf', 'texteProf', 'statutMicroProf', parlerAuProf);
+$('texteAccueil').addEventListener('keydown', e => { if (e.key === 'Enter' && !e.isComposing) comprendre(); });
+$('texteProf').addEventListener('keydown', e => { if (e.key === 'Enter' && !e.isComposing) parlerAuProf(); });
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return;
+  if (visite) finirVisite();
+  else if (document.body.classList.contains('mode-classe')) basculerModeClasse();
+});
+
+// Bandeau hors connexion
+const majConnexion = () => $('bandeauHorsLigne').classList.toggle('cache', navigator.onLine !== false);
+window.addEventListener('online', majConnexion);
+window.addEventListener('offline', majConnexion);
+majConnexion();
+
+// Les polices arrivent parfois après le premier dessin : on redessine
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if (expCourante) dessiner(); });
+
+// Lien direct vers une expérience (ex : labopoche.vercel.app/#ohm)
+const ancre = location.hash.slice(1);
+if (EXPERIENCES[ancre]) {
+  history.replaceState(null, '', location.pathname);
+  history.pushState({ labo: ancre }, '', '#' + ancre);
+  ouvrirLabo(ancre, null, true);
 }
 </script>
 </body>
