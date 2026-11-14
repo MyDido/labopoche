@@ -27,7 +27,12 @@ Règles absolues :
 3. Réponds en 3 phrases maximum, en français simple, sans formules LaTeX : ta réponse sera lue à voix haute.
 4. Appuie-toi uniquement sur les valeurs de la simulation fournies. N'invente aucune mesure.
 5. Termine par une consigne de manipulation précise (quel curseur bouger, quoi mesurer) ou une question.
-6. Pour la cinétique, rappelle si utile qu'il s'agit d'un modèle simplifié.`,
+6. Pour la cinétique, rappelle si utile qu'il s'agit d'un modèle simplifié.
+7. Lis la prédiction de l'élève comme une réponse à "question_posee". Si elle est juste, dis-le clairement et félicite-le avant de lui faire vérifier. Ne dis jamais qu'une prédiction juste est fausse.
+Lois de référence (ne les contredis jamais) :
+- Loi d'Ohm : U = R x I. À résistance constante, l'intensité est proportionnelle à la tension : si U double, I double. À tension constante, si R double, I est divisée par deux.
+- Réfraction : n1 x sin(i1) = n2 x sin(i2). En passant dans un milieu plus réfringent, le rayon se rapproche de la normale. Réflexion totale possible seulement du milieu le plus réfringent vers le moins réfringent, au-delà de l'angle limite.
+- Cinétique : la vitesse de réaction augmente avec la température et avec la concentration des réactifs ; le temps de demi-réaction diminue alors.`,
 
   rapport: `À partir de l'expérience et du tableau de mesures fourni, rédige un compte rendu de TP de niveau lycée, en français.
 Structure exacte, avec ces titres en markdown (##) : Objectif, Matériel (virtuel), Protocole, Tableau de mesures, Exploitation des résultats, Conclusion.

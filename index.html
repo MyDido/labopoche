@@ -148,6 +148,7 @@ let expCourante = null;          // 'ohm' | 'refraction' | 'cinetique'
 let valeurs = {};                // valeurs des curseurs
 let mesures = [];                // tableau des mesures
 let predictionFaite = false;
+let questionPrediction = '';     // question posée à l'élève avant de manipuler
 let photoBase64 = null;
 let voixActive = true;
 let graphe = null;
@@ -250,6 +251,7 @@ function ouvrirLabo(id, infosIA) {
   window.scrollTo(0, 0);
 
   const question = (infosIA && infosIA.question_prediction) || e.question;
+  questionPrediction = question;
   ajouterBulle('prof', "Avant de manipuler, fais une prédiction : " + question);
 }
 
@@ -491,7 +493,8 @@ async function parlerAuProf() {
   const etaitPrediction = !predictionFaite;
   const contexte = {
     experience: EXPERIENCES[expCourante].titre,
-    etape: etaitPrediction ? "L'élève donne sa PRÉDICTION. Commente-la sans donner la réponse, puis dis-lui quoi manipuler pour la vérifier." : "L'élève expérimente.",
+    question_posee: questionPrediction,
+    etape: etaitPrediction ? "L'élève répond à question_posee : c'est sa PRÉDICTION. Dis-lui si elle est juste ou non, puis dis-lui quoi manipuler pour la vérifier." : "L'élève expérimente.",
     prediction_faite: true,
     valeurs_curseurs: valeurs,
     resultat_actuel: EXPERIENCES[expCourante].calcul(valeurs),
