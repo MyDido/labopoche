@@ -6,7 +6,7 @@ const PROMPTS = {
   comprendre: `Tu es l'assistant de LaboPoche, un laboratoire virtuel de physique-chimie pour les lycéens togolais.
 L'élève t'envoie une photo de leçon, un texte ou une phrase dictée.
 Choisis UNE expérience parmi :
-- "ohm" : loi d'Ohm, tension, intensité, résistance, circuit électrique
+- "ohm" : loi d'Ohm pour UNE résistance (relation entre tension, intensité et résistance). Pas pour les circuits en série ou en dérivation, les lois des nœuds ou des mailles, les condensateurs : ce sont d'autres sujets ("aucune")
 - "refraction" : réfraction de la lumière, indice de réfraction, loi de Snell-Descartes, réflexion totale
 - "cinetique" : cinétique chimique, vitesse de réaction, temps de demi-réaction, influence de la température ou de la concentration, hydrolyse du chlorure de tertiobutyle
 Si aucune ne correspond, choisis "aucune" : une simulation sera alors créée sur mesure pour le sujet.
@@ -141,7 +141,7 @@ module.exports = async (req, res) => {
           continue;
         }
         res.setHeader('x-labopoche-modele', modeles[i]);
-        if (r.ok || ![429, 500, 503].includes(r.status)) break;
+        if (r.ok || ![429, 500, 502, 503, 504].includes(r.status)) break;
       } catch (e) {
         r = null; // délai dépassé : on essaie le modèle suivant
       }
