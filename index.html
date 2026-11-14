@@ -1415,7 +1415,7 @@ function majBoutonVoix() {
 function brancherMicro(idBouton, idChamp, idStatut, apres) {
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   const bouton = $(idBouton), statut = $(idStatut), champ = $(idChamp);
-  const PRET = 'Touche le micro pour parler, ou écris ta réponse.';
+  const PRET = 'Touche le micro pour parler, ou écris.';
   if (!SR) {
     bouton.classList.add('indispo');
     bouton.setAttribute('aria-disabled', 'true');
@@ -1678,6 +1678,8 @@ async function genererExperience(sujet, options) {
     const enCache = lireCache(cle);
     const def = enCache && validerDefinition(enCache);
     if (def) { definirExperienceIA(def, sujet, false); ouvrirLabo('ia', def); return; }
+    const preparee = await chargerSimulationPreparee(cle.slice(PREFIXE_CACHE.length));
+    if (preparee) { definirExperienceIA(preparee, sujet, false); ouvrirLabo('ia', preparee); return; }
   }
   arreterVoix(); finirVisite(); arreterAnimation();
   const jeton = ++jetonTP;
@@ -1712,6 +1714,13 @@ async function genererExperience(sujet, options) {
       ? "L'IA n'a pas réussi à créer cette simulation. Réessaie, ou formule ton sujet autrement."
       : messageErreur(e.message));
   } finally { clearInterval(minuteur); }
+}
+
+async function chargerSimulationPreparee(nom) {
+  try {
+    const r = await fetch('/simulations/' + encodeURIComponent(nom) + '.json', { signal: AbortSignal.timeout(4000) });
+    return r.ok ? validerDefinition(await r.json()) : null;
+  } catch (e) { return null; }
 }
 
 function afficherErreurGeneration(message) {
