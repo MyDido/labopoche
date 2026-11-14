@@ -629,9 +629,9 @@
       </div>
     </div>
     <nav class="onglets" aria-label="Sections de l'expérience">
-      <button class="onglet" data-onglet="experience" onclick="choisirOnglet('experience')"><svg class="ico" aria-hidden="true"><use href="#i-rayon"/></svg><span>Expérience</span></button>
-      <button class="onglet" data-onglet="mesures" onclick="choisirOnglet('mesures')"><svg class="ico" aria-hidden="true"><use href="#i-regle"/></svg><span>Mesures</span></button>
-      <button class="onglet" data-onglet="prof" onclick="choisirOnglet('prof')"><svg class="ico" aria-hidden="true"><use href="#i-prof"/></svg><span>Prof</span><i class="pastille cache" id="pastilleProf"></i></button>
+      <button class="onglet" data-onglet="experience" onclick="finirVisite(); choisirOnglet('experience')"><svg class="ico" aria-hidden="true"><use href="#i-rayon"/></svg><span>Expérience</span></button>
+      <button class="onglet" data-onglet="mesures" onclick="finirVisite(); choisirOnglet('mesures')"><svg class="ico" aria-hidden="true"><use href="#i-regle"/></svg><span>Mesures</span></button>
+      <button class="onglet" data-onglet="prof" onclick="finirVisite(); choisirOnglet('prof')"><svg class="ico" aria-hidden="true"><use href="#i-prof"/></svg><span>Prof</span><i class="pastille cache" id="pastilleProf"></i></button>
     </nav>
     <button class="btn quitter-classe" onclick="basculerModeClasse()"><svg class="ico" aria-hidden="true"><use href="#i-fermer"/></svg> Quitter le mode classe</button>
   </section>
@@ -1489,7 +1489,9 @@ function afficherEtapeVisite() {
   }
   $('visiteCompteur').textContent = `Étape ${visite.i + 1} sur ${visite.etapes.length}`;
   $('visiteTitre').textContent = etape.titre;
-  $('visiteTexte').textContent = etape.texte;
+  $('visiteTexte').textContent = visite.ecran === 'labo' && visite.i === 0 && expCourante === 'ia'
+    ? "Manipule les réglages de la simulation créée par l'IA : les valeurs mesurées se mettent à jour tout de suite."
+    : etape.texte;
   $('visiteSuivant').textContent = visite.i === visite.etapes.length - 1 ? "J'ai compris" : 'Suivant';
   $('visiteSuivant').focus({ preventScroll: true });
 }
