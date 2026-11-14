@@ -1716,7 +1716,9 @@ async function genererExperience(sujet, options) {
   } finally { clearInterval(minuteur); }
 }
 
+const PREPAREES = ['chute-libre', 'pendule-simple', 'photosynthese', 'dosage-acide-base', 'circuits-en-derivation'];
 async function chargerSimulationPreparee(nom) {
+  if (!PREPAREES.includes(nom)) return null;
   try {
     const r = await fetch('/simulations/' + encodeURIComponent(nom) + '.json', { signal: AbortSignal.timeout(4000) });
     return r.ok ? validerDefinition(await r.json()) : null;
