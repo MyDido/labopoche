@@ -59,7 +59,7 @@
   .nom { color: #1E2A5A; font-family: var(--police-titres); font-weight: 700; font-size: 21px; letter-spacing: -.02em; white-space: nowrap; }
   .poche { color: #F28C1E; }
   .slogan { font-size: 13px; color: var(--doux); border-left: 1px solid var(--bord); padding-left: 12px; white-space: nowrap; }
-  @media (max-width: 640px) { .slogan { display: none; } }
+  @media (max-width: 780px) { .slogan { display: none; } }
   .actions-entete { margin-left: auto; display: flex; gap: 8px; flex: none; }
   .btn-entete { min-height: 44px; min-width: 44px; padding: 0 12px; border: 1px solid var(--bord); background: #fff; color: var(--encre); border-radius: 12px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; gap: 6px; transition: background .18s; }
   .btn-entete:hover { background: var(--fond); }
@@ -460,7 +460,7 @@
   <a class="marque" href="/" onclick="allerAccueil(); return false;" aria-label="LaboPoche, retour à l'accueil">
     <svg class="logo" aria-hidden="true"><use href="#logo"/></svg>
     <span class="nom">Labo<span class="poche">Poche</span></span>
-    <span class="slogan">Toute expérience, dans ta poche.</span>
+    <span class="slogan">Prédis-Manipule-Comprends : Toute Expérience, dans ta poche</span>
   </a>
   <div class="actions-entete">
     <button class="btn-entete" id="btnAide" onclick="lancerVisite(true)" aria-label="Aide : afficher la visite guidée"><svg class="ico" aria-hidden="true"><use href="#i-aide"/></svg> <span>Aide</span></button>
