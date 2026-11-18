@@ -403,7 +403,6 @@
   /* =========================================================
      v3 : REFONTE VISUELLE
      ========================================================= */
-  html { scroll-padding-top: 80px; }
   body { -webkit-font-smoothing: antialiased; }
   .section, .visite-cible, #equipe { scroll-margin-top: 88px; }
 
@@ -461,7 +460,7 @@
   @media (min-width: 641px) { .rech-go { padding: 0 20px; } .rech-go-texte { display: inline; } }
   .accueil-haut .statut-micro { margin-top: 8px; }
   .essaie { display: flex; align-items: center; gap: 8px; width: 100%; max-width: 760px; margin-top: 16px; justify-content: center; flex-wrap: wrap; }
-  .essaie-label { font-size: 14px; color: var(--doux); font-weight: 500; }
+  .essaie-label { flex: none; white-space: nowrap; font-size: 14px; color: var(--doux); font-weight: 500; }
   .pastilles { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
   .pastille-essai { min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--bord); background: #FBFAF6; color: var(--encre); font: inherit; font-size: 14px; font-weight: 500; white-space: nowrap; cursor: pointer; transition: border-color .18s, background .18s, color .18s, transform .18s; }
   .pastille-essai:hover { border-color: var(--vert-fonce); background: #fff; color: var(--vert-fonce); transform: translateY(-1px); }
