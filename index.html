@@ -423,6 +423,7 @@
   .btn-retour { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; min-width: 44px; padding: 0 12px; border: 1px solid var(--bord); border-radius: 12px; background: #fff; color: var(--encre); font-weight: 600; font-size: 15px; flex: none; justify-content: center; transition: background .18s; }
   .btn-retour:hover { background: var(--fond); }
   .nav-titre { font-family: var(--police-titres); font-weight: 600; font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+  .barre-labo { justify-content: flex-end; margin-bottom: 8px; }
   .menu-mobile { display: flex; flex-direction: column; gap: 4px; padding: 8px 16px 16px; border-top: 1px solid var(--bord); background: #fff; animation: apparait .2s ease-out; }
   .menu-mobile[hidden] { display: none; }
   .menu-mobile .nav-lien { width: 100%; justify-content: flex-start; min-height: 48px; font-size: 16px; }
@@ -455,7 +456,7 @@
   .accueil-sous { color: #3F4656; font-size: clamp(16px, 2vw, 18px); line-height: 1.5; max-width: 52ch; margin: 0 0 24px; }
   .recherche { max-width: 680px; padding: 6px 6px 6px 20px; border: 1.5px solid var(--bord); box-shadow: 0 10px 30px rgba(30, 42, 90, .08); }
   .recherche:focus-within { border-color: var(--vert-fonce); box-shadow: 0 0 0 5px rgba(30, 42, 90, .12), 0 10px 30px rgba(30, 42, 90, .08); }
-  .rech-go { width: auto; min-width: 48px; height: 48px; padding: 0 14px; border-radius: 999px; gap: 8px; font-weight: 600; font-size: 15px; background: var(--vert-fonce); }
+  .rech-go { display: inline-flex; align-items: center; justify-content: center; white-space: nowrap; width: auto; min-width: 48px; height: 48px; padding: 0 14px; border-radius: 999px; gap: 8px; font-weight: 600; font-size: 15px; background: var(--vert-fonce); }
   .rech-go-texte { display: none; }
   @media (min-width: 641px) { .rech-go { padding: 0 20px; } .rech-go-texte { display: inline; } }
   .accueil-haut .statut-micro { margin-top: 8px; }
@@ -464,6 +465,7 @@
   .pastilles { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
   .pastille-essai { min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--bord); background: #FBFAF6; color: var(--encre); font: inherit; font-size: 14px; font-weight: 500; white-space: nowrap; cursor: pointer; transition: border-color .18s, background .18s, color .18s, transform .18s; }
   .pastille-essai:hover { border-color: var(--vert-fonce); background: #fff; color: var(--vert-fonce); transform: translateY(-1px); }
+  @media (min-width: 641px) { .pastilles { display: contents; } }
   @media (max-width: 640px) {
     .essaie { flex-wrap: nowrap; justify-content: flex-start; }
     .pastilles { flex-wrap: nowrap; justify-content: flex-start; overflow-x: auto; scrollbar-width: none; margin-right: -16px; padding-right: 16px; }
@@ -516,7 +518,7 @@
   .pied .nom { color: #fff; }
   .pied-slogan { color: #fff; font-weight: 600; margin: 8px 0 4px; }
   .pied-col p { margin: 0; }
-  .pied-bas { max-width: 1120px; margin: 40px auto 0; padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, .12); font-size: 13px; color: #A9B0C4; }
+  .pied .pied-bas { max-width: 1120px; margin: 40px auto 0; padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, .12); font-size: 13px; color: #A9B0C4; }
   .liste-confidentialite { margin: 16px 0 0; padding-left: 20px; display: grid; gap: 10px; color: #3F4656; }
 
   @media (prefers-reduced-motion: reduce) {
@@ -2021,7 +2023,15 @@ function commencer() {
   if (document.body.dataset.ecran !== 'ecranAccueil') { allerAccueil(); setTimeout(viser, 350); } else viser();
 }
 // Pastilles « Essaie : » : remplit la barre puis lance la demande
-function essayer(texte, lancer) { $('texteAccueil').value = texte; lancer(); }
+function essayer(texte, lancer) {
+  const champ = $('texteAccueil');
+  champ.value = texte;
+  const obs = new MutationObserver(() => {
+    if (document.body.dataset.ecran !== 'ecranAccueil') { if (champ.value === texte) champ.value = ''; obs.disconnect(); }
+  });
+  obs.observe(document.body, { attributes: true, attributeFilter: ['data-ecran'] });
+  lancer();
+}
 function decouvrirModeClasse() { ouvrirLabo('ohm'); basculerModeClasse(); }
 function ouvrirConfidentialite() {
   const d = $('panneauConfidentialite');
