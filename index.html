@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LaboPoche | Toute expérience, dans ta poche.</title>
-<meta name="description" content="LaboPoche, toute expérience dans ta poche : un laboratoire virtuel de sciences pour les élèves. Prédis, manipule une simulation, et un professeur IA t'aide à comprendre jusqu'au compte rendu de TP.">
+<title>LaboPoche : Toute expérience, dans ta poche.</title>
+<meta name="description" content="LaboPoche : Toute expérience, dans ta poche. Un laboratoire virtuel de sciences pour les élèves. Prédis, manipule une simulation, et un professeur IA t'aide à comprendre jusqu'au compte rendu de TP.">
 <meta name="theme-color" content="#F6F4EE">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="LaboPoche">
 <meta property="og:locale" content="fr_FR">
-<meta property="og:title" content="LaboPoche | Toute expérience, dans ta poche.">
+<meta property="og:title" content="LaboPoche : Toute expérience, dans ta poche.">
 <meta property="og:description" content="Fais de vraies expériences de physique-chimie sur ton téléphone, même sans laboratoire : loi d'Ohm, réfraction, cinétique chimique, avec un professeur IA.">
 <meta property="og:url" content="https://labopoche.vercel.app/">
 <meta property="og:image" content="https://labopoche.vercel.app/og-image.png">
@@ -400,6 +400,130 @@
   .panneau h3 { font-size: 16px; margin: 18px 0 4px; color: var(--vert-fonce); }
   .panneau p { margin: 0 0 4px; color: var(--doux); }
 
+  /* =========================================================
+     v3 : REFONTE VISUELLE
+     ========================================================= */
+  html { scroll-padding-top: 80px; }
+  body { -webkit-font-smoothing: antialiased; }
+  .section, .visite-cible, #equipe { scroll-margin-top: 88px; }
+
+  /* Barre de navigation */
+  .entete { position: sticky; top: 0; z-index: 40; display: block; padding: 0; background: rgba(255, 255, 255, .86); -webkit-backdrop-filter: saturate(160%) blur(12px); backdrop-filter: saturate(160%) blur(12px); border-bottom: 1px solid transparent; transition: box-shadow .25s, border-color .25s; }
+  .entete.defile { box-shadow: 0 6px 20px rgba(30, 42, 90, .08); border-bottom-color: var(--bord); }
+  .entete-int { max-width: 1120px; margin: 0 auto; padding: 8px 16px; min-height: 64px; display: flex; align-items: center; gap: 16px; }
+  .entete .logo { width: 34px; height: 34px; }
+  .nav-liens { display: none; gap: 4px; margin: 0 auto; }
+  .nav-lien { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 14px; border: 0; border-radius: 10px; background: none; color: var(--encre); font: inherit; font-size: 15px; font-weight: 500; text-decoration: none; cursor: pointer; transition: background .18s, color .18s; }
+  .nav-lien:hover { background: var(--vert-clair); color: var(--vert-fonce); }
+  .actions-entete { margin-left: auto; align-items: center; }
+  .btn-entete { border-color: transparent; background: transparent; padding: 0; width: 44px; }
+  .btn-entete:hover { background: var(--vert-clair); }
+  .btn-nav { min-height: 44px; padding: 8px 18px; font-size: 15px; }
+  #btnAide, #btnVoix, #btnCommencer { display: none; }
+  .nav-labo { display: none; align-items: center; gap: 8px; min-width: 0; flex: 1; }
+  .btn-retour { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; min-width: 44px; padding: 0 12px; border: 1px solid var(--bord); border-radius: 12px; background: #fff; color: var(--encre); font-weight: 600; font-size: 15px; flex: none; justify-content: center; transition: background .18s; }
+  .btn-retour:hover { background: var(--fond); }
+  .nav-titre { font-family: var(--police-titres); font-weight: 600; font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+  .menu-mobile { display: flex; flex-direction: column; gap: 4px; padding: 8px 16px 16px; border-top: 1px solid var(--bord); background: #fff; animation: apparait .2s ease-out; }
+  .menu-mobile[hidden] { display: none; }
+  .menu-mobile .nav-lien { width: 100%; justify-content: flex-start; min-height: 48px; font-size: 16px; }
+  .menu-mobile .btn { margin-top: 8px; }
+  @media (min-width: 960px) {
+    .nav-liens { display: flex; }
+    .btn-menu { display: none; }
+    #btnAide, #btnVoix, #btnCommencer { display: inline-flex; }
+    .menu-mobile { display: none !important; }
+  }
+  /* Dans l'espace de travail : logo, retour, titre, aide et voix */
+  body:not([data-ecran=ecranAccueil]) .nav-liens, body:not([data-ecran=ecranAccueil]) #btnCommencer,
+  body:not([data-ecran=ecranAccueil]) .btn-menu, body:not([data-ecran=ecranAccueil]) .menu-mobile { display: none !important; }
+  body:not([data-ecran=ecranAccueil]) .nav-labo { display: flex; }
+  body:not([data-ecran=ecranAccueil]) #btnAide, body:not([data-ecran=ecranAccueil]) #btnVoix { display: inline-flex; }
+  body:not([data-ecran=ecranAccueil]) .entete .nom { display: none; }
+  @media (max-width: 640px) {
+    .btn-retour span { display: none; }
+    .btn-retour { padding: 0; width: 44px; }
+  }
+  @media (min-width: 641px) { body:not([data-ecran=ecranAccueil]) .entete .nom { display: inline; } }
+
+  /* Section d'accueil */
+  main { padding-top: 0; }
+  .accueil-haut { position: relative; min-height: calc(100vh - 64px); min-height: calc(100svh - 64px); padding: 24px 0 32px; justify-content: center; }
+  .accueil-haut::before { content: ''; position: absolute; inset: -40px -16px 0; z-index: -1; background: radial-gradient(60% 45% at 50% 30%, rgba(30, 42, 90, .07), transparent 70%), radial-gradient(35% 30% at 72% 58%, rgba(242, 140, 30, .08), transparent 70%); pointer-events: none; }
+  .etiquette { display: inline-flex; align-items: center; gap: 8px; margin: 0 0 16px; padding: 6px 14px; border-radius: 999px; background: #fff; border: 1px solid var(--bord); color: var(--vert-fonce); font-size: 13px; font-weight: 600; }
+  .etiquette .ico { color: var(--orange); width: 14px; height: 14px; }
+  .accueil-haut h1 { font-size: clamp(32px, 8.4vw, 60px); line-height: 1.1; letter-spacing: -.025em; max-width: 16ch; margin: 0 0 16px; color: var(--vert-fonce); }
+  .accueil-sous { color: #3F4656; font-size: clamp(16px, 2vw, 18px); line-height: 1.5; max-width: 52ch; margin: 0 0 24px; }
+  .recherche { max-width: 680px; padding: 6px 6px 6px 20px; border: 1.5px solid var(--bord); box-shadow: 0 10px 30px rgba(30, 42, 90, .08); }
+  .recherche:focus-within { border-color: var(--vert-fonce); box-shadow: 0 0 0 5px rgba(30, 42, 90, .12), 0 10px 30px rgba(30, 42, 90, .08); }
+  .rech-go { width: auto; min-width: 48px; height: 48px; padding: 0 14px; border-radius: 999px; gap: 8px; font-weight: 600; font-size: 15px; background: var(--vert-fonce); }
+  .rech-go-texte { display: none; }
+  @media (min-width: 641px) { .rech-go { padding: 0 20px; } .rech-go-texte { display: inline; } }
+  .accueil-haut .statut-micro { margin-top: 8px; }
+  .essaie { display: flex; align-items: center; gap: 8px; width: 100%; max-width: 760px; margin-top: 16px; justify-content: center; flex-wrap: wrap; }
+  .essaie-label { font-size: 14px; color: var(--doux); font-weight: 500; }
+  .pastilles { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+  .pastille-essai { min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--bord); background: #FBFAF6; color: var(--encre); font: inherit; font-size: 14px; font-weight: 500; white-space: nowrap; cursor: pointer; transition: border-color .18s, background .18s, color .18s, transform .18s; }
+  .pastille-essai:hover { border-color: var(--vert-fonce); background: #fff; color: var(--vert-fonce); transform: translateY(-1px); }
+  @media (max-width: 640px) {
+    .essaie { flex-wrap: nowrap; justify-content: flex-start; }
+    .pastilles { flex-wrap: nowrap; justify-content: flex-start; overflow-x: auto; scrollbar-width: none; margin-right: -16px; padding-right: 16px; }
+    .pastilles::-webkit-scrollbar { display: none; }
+  }
+
+  /* Sections */
+  .section { margin-top: 96px; }
+  @media (max-width: 640px) { .section { margin-top: 64px; } }
+  .surtitre-section { margin: 0 0 8px; color: var(--orange); font-size: 13px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+  .surtitre-section { color: #B35F0A; }
+  .section > h2, .bloc-enseignants h2 { font-size: clamp(26px, 4.5vw, 38px); line-height: 1.15; letter-spacing: -.02em; color: var(--vert-fonce); margin-bottom: 24px; max-width: 24ch; }
+  .exp-icone, .etape-cm .exp-icone { width: 48px; height: 48px; flex: none; border-radius: 14px; display: grid; place-items: center; background: var(--vert-clair); color: var(--vert-fonce); font-size: 0; }
+  .exp-icone .ico { width: 24px; height: 24px; }
+  .grille-exp { gap: 16px; }
+  .exp { padding: 24px; gap: 12px; transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+  .exp:hover { transform: translateY(-4px); border-color: var(--bord); box-shadow: 0 16px 36px rgba(30, 42, 90, .12); }
+  .exp h3 { font-size: 19px; color: var(--vert-fonce); }
+  .exp .aller { display: inline-flex; align-items: center; gap: 6px; margin-top: 4px; font-weight: 600; color: var(--vert-fonce); font-size: 15px; }
+  .mention { display: flex; align-items: center; gap: 8px; margin: 16px 0 0; color: var(--doux); font-size: 14px; }
+  .mention .ico { color: var(--orange); flex: none; }
+  .etapes-cm { gap: 16px; }
+  .etapes-cm .etape-cm { background: var(--carte); border: 1px solid var(--bord); border-radius: var(--rayon); padding: 24px; box-shadow: var(--ombre); gap: 16px; }
+  .etape-cm h3 { color: var(--vert-fonce); }
+  .bloc-enseignants { display: flex; gap: 24px; align-items: flex-start; background: var(--carte); border: 1px solid var(--bord); border-radius: 20px; padding: 32px; box-shadow: var(--ombre); }
+  .bloc-enseignants h2 { margin-bottom: 12px; }
+  .bloc-enseignants .section-intro { margin: 0 0 24px; color: #3F4656; font-size: 17px; }
+  @media (max-width: 640px) { .bloc-enseignants { flex-direction: column; padding: 24px; } }
+  .apropos-grille { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+  .apropos-grille .carte { padding: 24px; }
+  .apropos-grille h3 { font-size: 17px; color: var(--vert-fonce); margin-bottom: 8px; }
+  .apropos-grille p { margin: 0; color: #3F4656; }
+  .equipe { list-style: none; padding: 0; margin: 0 0 12px; display: grid; gap: 8px; font-weight: 600; }
+
+  /* Apparition douce au défilement */
+  .revele { opacity: 0; transform: translateY(16px); transition: opacity .3s ease, transform .3s ease; }
+  .revele.visible { opacity: 1; transform: none; }
+
+  /* Pied de page */
+  .pied { margin-top: 96px; padding: 56px 16px 24px; background: #141C3D; color: #C9CEDD; text-align: left; font-size: 15px; border: 0; }
+  .pied-grille { max-width: 1120px; margin: 0 auto; display: grid; gap: 32px; grid-template-columns: 1fr; }
+  @media (min-width: 760px) { .pied-grille { grid-template-columns: 1.5fr 1fr 1.3fr 1fr; } }
+  .pied h2 { font-family: var(--police-titres); font-size: 14px; color: #fff; letter-spacing: .04em; text-transform: uppercase; margin: 0 0 12px; }
+  .pied ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 2px; }
+  .pied a, .pied .lien-pied { display: inline-flex; align-items: center; min-height: 44px; color: #C9CEDD; text-decoration: none; font: inherit; font-weight: 400; background: none; border: 0; padding: 0; cursor: pointer; transition: color .18s; text-align: left; }
+  .pied a:hover, .pied .lien-pied:hover { color: #fff; text-decoration: underline; }
+  .pied li > span { display: inline-flex; align-items: center; min-height: 44px; }
+  .pied .marque { color: #fff; }
+  .pied .marque .logo { width: 34px; height: 34px; background: #fff; border-radius: 10px; padding: 3px; }
+  .pied .nom { color: #fff; }
+  .pied-slogan { color: #fff; font-weight: 600; margin: 8px 0 4px; }
+  .pied-col p { margin: 0; }
+  .pied-bas { max-width: 1120px; margin: 40px auto 0; padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, .12); font-size: 13px; color: #A9B0C4; }
+  .liste-confidentialite { margin: 16px 0 0; padding-left: 20px; display: grid; gap: 10px; color: #3F4656; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .revele { opacity: 1 !important; transform: none !important; }
+  }
+
   /* ---------- Impression du compte rendu ---------- */
   @media print {
     @page { margin: 15mm; }
@@ -418,7 +542,7 @@
   }
 </style>
 </head>
-<body>
+<body data-ecran="ecranAccueil">
 <!-- Logo défini une seule fois, réutilisé partout avec <use href="#logo"> -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <symbol id="logo" viewBox="0 0 48 48">
@@ -452,19 +576,42 @@
   <symbol id="i-fleche-droite" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></symbol>
   <symbol id="i-verifie" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></symbol>
   <symbol id="i-etincelle" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.2 6.6L21 11l-6.8 2.4L12 20l-2.2-6.6L3 11l6.8-2.4z"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+  <symbol id="i-bouclier" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></symbol>
 </svg>
 
 <a class="lien-evitement" href="#contenu">Aller au contenu</a>
 
-<header class="entete">
-  <a class="marque" href="/" onclick="allerAccueil(); return false;" aria-label="LaboPoche, retour à l'accueil">
-    <svg class="logo" aria-hidden="true"><use href="#logo"/></svg>
-    <span class="nom">Labo<span class="poche">Poche</span></span>
-    <span class="slogan">Prédis-Manipule-Comprends : Toute Expérience, dans ta poche</span>
-  </a>
-  <div class="actions-entete">
-    <button class="btn-entete" id="btnAide" onclick="lancerVisite(true)" aria-label="Aide : afficher la visite guidée"><svg class="ico" aria-hidden="true"><use href="#i-aide"/></svg> <span>Aide</span></button>
-    <button class="btn-entete" id="btnVoix" onclick="basculerVoix()" aria-pressed="true" aria-label="Voix du professeur activée. Appuie pour la couper."><svg class="ico" aria-hidden="true"><use href="#i-son"/></svg></button>
+<header class="entete" id="entete">
+  <div class="entete-int">
+    <a class="marque" href="/" onclick="allerAccueil(); return false;" aria-label="LaboPoche, retour à l'accueil">
+      <svg class="logo" aria-hidden="true"><use href="#logo"/></svg>
+      <span class="nom">Labo<span class="poche">Poche</span></span>
+    </a>
+    <div class="nav-labo">
+      <button class="btn-retour" onclick="allerAccueil()" aria-label="Retour à l'accueil"><svg class="ico" aria-hidden="true"><use href="#i-fleche-gauche"/></svg><span>Retour à l'accueil</span></button>
+      <span class="nav-titre" id="navTitre"></span>
+    </div>
+    <nav class="nav-liens" aria-label="Navigation principale">
+      <a class="nav-lien" href="#experiences" onclick="return allerSection('experiences')">Expériences</a>
+      <a class="nav-lien" href="#comment" onclick="return allerSection('comment')">Comment ça marche</a>
+      <a class="nav-lien" href="#enseignants" onclick="return allerSection('enseignants')">Pour les enseignants</a>
+      <a class="nav-lien" href="#apropos" onclick="return allerSection('apropos')">À propos</a>
+    </nav>
+    <div class="actions-entete">
+      <button class="btn-entete" id="btnAide" onclick="lancerVisite(true)" aria-label="Aide : afficher la visite guidée" title="Aide"><svg class="ico" aria-hidden="true"><use href="#i-aide"/></svg></button>
+      <button class="btn-entete" id="btnVoix" onclick="basculerVoix()" aria-pressed="true" aria-label="Voix du professeur activée. Appuie pour la couper."><svg class="ico" aria-hidden="true"><use href="#i-son"/></svg></button>
+      <button class="btn btn-nav" id="btnCommencer" onclick="commencer()">Commencer</button>
+      <button class="btn-entete btn-menu" id="btnMenu" onclick="basculerMenu()" aria-expanded="false" aria-controls="menuMobile" aria-label="Ouvrir le menu"><svg class="ico" aria-hidden="true"><use href="#i-menu"/></svg></button>
+    </div>
+  </div>
+  <div class="menu-mobile" id="menuMobile" hidden>
+    <a class="nav-lien" href="#experiences" onclick="return allerSection('experiences')">Expériences</a>
+    <a class="nav-lien" href="#comment" onclick="return allerSection('comment')">Comment ça marche</a>
+    <a class="nav-lien" href="#enseignants" onclick="return allerSection('enseignants')">Pour les enseignants</a>
+    <a class="nav-lien" href="#apropos" onclick="return allerSection('apropos')">À propos</a>
+    <button class="nav-lien" onclick="basculerMenu(false); lancerVisite(true)"><svg class="ico" aria-hidden="true"><use href="#i-aide"/></svg> Aide : visite guidée</button>
+    <button class="btn btn-plein" onclick="basculerMenu(false); commencer()">Commencer</button>
   </div>
 </header>
 <div id="bandeauHorsLigne" class="bandeau cache" role="status">Tu es hors connexion : les simulations fonctionnent, mais le professeur IA a besoin d'internet.</div>
@@ -474,52 +621,96 @@
   <!-- ===================== ÉCRAN ACCUEIL ===================== -->
   <section id="ecranAccueil">
     <div class="accueil-haut">
-      <svg class="logo-accueil" aria-hidden="true"><use href="#logo"/></svg>
-      <h1>Fais de vraies expériences de sciences, même sans laboratoire</h1>
-      <p class="accueil-sous">Décris ta leçon, dicte-la ou prends-la en photo : on la transforme en expérience à manipuler.</p>
+      <p class="etiquette"><svg class="ico" aria-hidden="true"><use href="#i-etincelle"/></svg> Laboratoire de sciences guidé par l'IA</p>
+      <h1>Comprends les sciences en les manipulant.</h1>
+      <p class="accueil-sous">Décris la notion qui te bloque, dicte-la ou prends ta leçon en photo. LaboPoche la transforme en expérience interactive, guidée par un professeur IA.</p>
       <div class="recherche" id="recherche">
-        <input type="text" id="texteAccueil" placeholder="Ex : je ne comprends pas pourquoi la lumière se plie dans l'eau" aria-label="Ce que tu n'as pas compris" enterkeyhint="go" autocomplete="off">
+        <input type="text" id="texteAccueil" placeholder="Ex : je ne comprends pas pourquoi la lumière se plie dans l'eau" aria-label="La notion qui te bloque" enterkeyhint="go" autocomplete="off">
         <button class="rech-btn" id="microAccueil" aria-label="Dicter ta demande"><svg class="ico" aria-hidden="true"><use href="#i-micro"/></svg></button>
         <label class="rech-btn" title="Photo de ta leçon"><svg class="ico" aria-hidden="true"><use href="#i-photo"/></svg><span class="sr-only">Prendre ta leçon en photo</span>
           <input type="file" accept="image/*" capture="environment" id="photoLecon" class="sr-only">
         </label>
-        <button class="rech-go" id="btnComprendre" onclick="comprendre()" aria-label="Lancer l'expérience"><svg class="ico" aria-hidden="true"><use href="#i-fleche-droite"/></svg></button>
+        <button class="rech-go" id="btnComprendre" onclick="comprendre()" aria-label="Lancer l'expérience"><span class="rech-go-texte">Lancer</span><svg class="ico" aria-hidden="true"><use href="#i-fleche-droite"/></svg></button>
       </div>
       <p class="statut-micro" id="statutMicroAccueil" aria-live="polite"></p>
       <p id="msgAccueil" class="message-attente" aria-live="polite"></p>
       <span id="infoPhoto" class="note"></span>
-      <p class="exemples" id="suggestions">Essaie : <button class="lien-exemple" onclick="genererExperience('Chute libre')">la chute libre</button>, <button class="lien-exemple" onclick="genererExperience('Pendule simple')">le pendule</button>, <button class="lien-exemple" onclick="genererExperience('Photosynthèse')">la photosynthèse</button>, <button class="lien-exemple" onclick="genererExperience('Dosage acide-base')">le dosage acide-base</button></p>
+      <div class="essaie" id="suggestions">
+        <span class="essaie-label">Essaie :</span>
+        <div class="pastilles">
+          <button class="pastille-essai" onclick="essayer(&quot;la chute libre&quot;, () => genererExperience('Chute libre'))">la chute libre</button>
+          <button class="pastille-essai" onclick="essayer(&quot;le pendule&quot;, () => genererExperience('Pendule simple'))">le pendule</button>
+          <button class="pastille-essai" onclick="essayer(&quot;la photosynthèse&quot;, () => genererExperience('Photosynthèse'))">la photosynthèse</button>
+          <button class="pastille-essai" onclick="essayer(&quot;le dosage acide-base&quot;, () => genererExperience('Dosage acide-base'))">le dosage acide-base</button>
+          <button class="pastille-essai" onclick="essayer(&quot;la loi d'Ohm&quot;, () => ouvrirLabo('ohm'))">la loi d'Ohm</button>
+          <button class="pastille-essai" onclick="essayer(&quot;la réfraction&quot;, () => ouvrirLabo('refraction'))">la réfraction</button>
+        </div>
+      </div>
     </div>
 
-    <section class="section" id="choisir" aria-labelledby="titreChoisir">
-      <h2 id="titreChoisir">Expériences vérifiées</h2>
-      <p class="section-intro">Relues et testées par l'équipe. Pour tout autre sujet, l'IA crée une simulation sur mesure.</p>
+    <section class="section revele" id="experiences" aria-labelledby="titreExperiences">
+      <p class="surtitre-section">Expériences vérifiées</p>
+      <h2 id="titreExperiences">Trois expériences relues et testées par l'équipe</h2>
       <div class="grille-exp" id="grilleExp">
         <button class="exp" onclick="ouvrirLabo('ohm')">
-          <span class="exp-haut"><span class="exp-icone exp-ohm"><svg class="ico" aria-hidden="true"><use href="#i-eclair"/></svg></span></span>
+          <span class="exp-icone"><svg class="ico" aria-hidden="true"><use href="#i-eclair"/></svg></span>
           <h3>Loi d'Ohm</h3>
           <p>Tension, intensité et résistance dans un circuit.</p>
+          <span class="aller">Ouvrir <svg class="ico" aria-hidden="true"><use href="#i-fleche-droite"/></svg></span>
         </button>
         <button class="exp" onclick="ouvrirLabo('refraction')">
-          <span class="exp-haut"><span class="exp-icone exp-refraction"><svg class="ico" aria-hidden="true"><use href="#i-rayon"/></svg></span></span>
+          <span class="exp-icone"><svg class="ico" aria-hidden="true"><use href="#i-rayon"/></svg></span>
           <h3>Réfraction de la lumière</h3>
           <p>Un rayon qui change de direction entre deux milieux.</p>
+          <span class="aller">Ouvrir <svg class="ico" aria-hidden="true"><use href="#i-fleche-droite"/></svg></span>
         </button>
         <button class="exp" onclick="ouvrirLabo('cinetique')">
-          <span class="exp-haut"><span class="exp-icone exp-cinetique"><svg class="ico" aria-hidden="true"><use href="#i-chrono"/></svg></span></span>
+          <span class="exp-icone"><svg class="ico" aria-hidden="true"><use href="#i-chrono"/></svg></span>
           <h3>Cinétique chimique</h3>
           <p>L'effet de la température sur la vitesse d'une réaction.</p>
+          <span class="aller">Ouvrir <svg class="ico" aria-hidden="true"><use href="#i-fleche-droite"/></svg></span>
         </button>
+      </div>
+      <p class="mention"><svg class="ico" aria-hidden="true"><use href="#i-etincelle"/></svg> Pour tout autre sujet, l'IA crée une simulation sur mesure, signalée comme modèle à vérifier.</p>
+    </section>
+
+    <section class="section revele" id="comment" aria-labelledby="titreComment">
+      <p class="surtitre-section">Comment ça marche</p>
+      <h2 id="titreComment">Prédis. Manipule. Comprends.</h2>
+      <ol class="etapes-cm">
+        <li class="etape-cm"><span class="exp-icone"><svg class="ico" aria-hidden="true"><use href="#i-ampoule"/></svg></span><div><h3>1. Je prédis</h3><p>Avant de toucher à quoi que ce soit, je dis ce qui va se passer.</p></div></li>
+        <li class="etape-cm"><span class="exp-icone"><svg class="ico" aria-hidden="true"><use href="#i-regle"/></svg></span><div><h3>2. Je manipule</h3><p>Je règle la simulation et je fais mes mesures, comme au laboratoire.</p></div></li>
+        <li class="etape-cm"><span class="exp-icone"><svg class="ico" aria-hidden="true"><use href="#i-document"/></svg></span><div><h3>3. Je comprends</h3><p>Le professeur IA m'aide à comparer, puis j'obtiens mon compte rendu.</p></div></li>
+      </ol>
+    </section>
+
+    <section class="section revele" id="enseignants" aria-labelledby="titreEnseignants">
+      <div class="bloc-enseignants">
+        <span class="exp-icone"><svg class="ico" aria-hidden="true"><use href="#i-ecran"/></svg></span>
+        <div>
+          <p class="surtitre-section">Pour les enseignants</p>
+          <h2 id="titreEnseignants">Toute la classe manipule, sans matériel</h2>
+          <p class="section-intro">Projetez l'expérience au tableau grâce au mode classe, et faites manipuler toute la classe, sans matériel ni réactifs.</p>
+          <button class="btn btn-contour" onclick="decouvrirModeClasse()"><svg class="ico" aria-hidden="true"><use href="#i-ecran"/></svg> Découvrir le mode classe</button>
+        </div>
       </div>
     </section>
 
-    <section class="section" id="comment" aria-labelledby="titreComment">
-      <h2 id="titreComment">Comment ça marche ?</h2>
-      <ol class="etapes-cm">
-        <li class="etape-cm"><span class="icone-etape"><svg class="ico" aria-hidden="true"><use href="#i-ampoule"/></svg></span><div><h3>1. Je prédis</h3><p>Je dis ce qui va se passer.</p></div></li>
-        <li class="etape-cm"><span class="icone-etape"><svg class="ico" aria-hidden="true"><use href="#i-regle"/></svg></span><div><h3>2. Je manipule</h3><p>Je règle et je mesure.</p></div></li>
-        <li class="etape-cm"><span class="icone-etape"><svg class="ico" aria-hidden="true"><use href="#i-document"/></svg></span><div><h3>3. Je comprends</h3><p>Le prof m'aide, j'obtiens mon compte rendu.</p></div></li>
-      </ol>
+    <section class="section revele" id="apropos" aria-labelledby="titreApropos">
+      <p class="surtitre-section">À propos</p>
+      <h2 id="titreApropos">Pourquoi LaboPoche ?</h2>
+      <div class="apropos-grille">
+        <div class="carte"><h3>Le problème</h3><p>Dans de nombreux lycées togolais, les laboratoires de sciences sont absents ou manquent de matériel. Beaucoup d'élèves apprennent les sciences sans pouvoir faire les expériences de leur programme.</p></div>
+        <div class="carte"><h3>Notre solution</h3><p>LaboPoche transforme un simple téléphone en laboratoire : l'élève prédit, manipule une simulation et mesure, pendant qu'un professeur IA le guide sans lui donner la réponse. Trois expériences sont vérifiées par l'équipe ; pour tout autre sujet, l'IA crée une simulation sur mesure, à vérifier avec son professeur.</p></div>
+        <div class="carte"><h3>Sources</h3><ul class="sources">
+          <li><a href="https://www.ajol.info/index.php/echanges/article/view/255476/241384" target="_blank" rel="noopener">Université de Lomé, revue Échanges (2023)</a></li>
+          <li><a href="https://www.undp.org/fr/node/381456" target="_blank" rel="noopener">PNUD Togo (2023)</a></li>
+          <li><a href="https://apprendre.auf.org/wp-content/uploads/2025/10/13-DID_Sciences_college.pdf" target="_blank" rel="noopener">Journées nationales de l'innovation pédagogique</a></li>
+          <li><a href="https://www.unicef.org/togo/recits/le-r%C3%AAve-de-modoukp%C3%A8-prend-son-envol" target="_blank" rel="noopener">UNICEF Togo : « Le rêve de Modoukpè prend son envol »</a></li>
+        </ul></div>
+        <div class="carte" id="equipe"><h3>L'équipe GENESIS</h3><ul class="equipe"><li>MUHAMMAD Hassan Idriss</li><li>MOUSSA SOUMAINE BACHAR</li><li>LEMOU Essowaba Dieu Donné</li></ul>
+          <p class="note">Projet réalisé pour le Hackathon Create With AI, Lomé 2026. Propulsé par Google Gemini, développé avec l'aide de Claude.</p></div>
+      </div>
     </section>
   </section>
 
@@ -552,7 +743,6 @@
   <!-- ===================== ÉCRAN EXPÉRIENCE ===================== -->
   <section id="ecranLabo" class="cache">
     <div class="barre-labo">
-      <button class="btn btn-contour" onclick="allerAccueil()"><svg class="ico" aria-hidden="true"><use href="#i-fleche-gauche"/></svg> Accueil</button>
       <button class="btn btn-contour" id="btnClasse" onclick="basculerModeClasse()"><svg class="ico" aria-hidden="true"><use href="#i-ecran"/></svg> Mode classe</button>
     </div>
     <p id="badgeType" class="badge-type"></p>
@@ -628,31 +818,53 @@
 </main>
 
 <footer class="pied">
-  <p>LaboPoche · Équipe GENESIS · Hackathon Create With AI 2026 · <button class="lien-pied" onclick="ouvrirApropos()">À propos</button></p>
+  <div class="pied-grille">
+    <div class="pied-col pied-marque-col">
+      <a class="marque" href="/" onclick="allerAccueil(); return false;" aria-label="LaboPoche, retour à l'accueil"><svg class="logo" aria-hidden="true"><use href="#logo"/></svg><span class="nom">Labo<span class="poche">Poche</span></span></a>
+      <p class="pied-slogan">Toute expérience, dans ta poche.</p>
+      <p>Un laboratoire de sciences gratuit, accessible depuis un téléphone.</p>
+    </div>
+    <div class="pied-col">
+      <h2>Produit</h2>
+      <ul>
+        <li><a href="#experiences" onclick="return allerSection('experiences')">Expériences</a></li>
+        <li><a href="#comment" onclick="return allerSection('comment')">Comment ça marche</a></li>
+        <li><a href="#enseignants" onclick="return allerSection('enseignants')">Pour les enseignants</a></li>
+        <li><button class="lien-pied" onclick="decouvrirModeClasse()">Mode classe</button></li>
+      </ul>
+    </div>
+    <div class="pied-col">
+      <h2>Ressources</h2>
+      <ul>
+        <li><a href="https://www.ajol.info/index.php/echanges/article/view/255476/241384" target="_blank" rel="noopener">Université de Lomé</a></li>
+        <li><a href="https://www.undp.org/fr/node/381456" target="_blank" rel="noopener">PNUD Togo</a></li>
+        <li><a href="https://apprendre.auf.org/wp-content/uploads/2025/10/13-DID_Sciences_college.pdf" target="_blank" rel="noopener">Journées nationales de l'innovation pédagogique</a></li>
+        <li><a href="https://www.unicef.org/togo/recits/le-r%C3%AAve-de-modoukp%C3%A8-prend-son-envol" target="_blank" rel="noopener">UNICEF Togo</a></li>
+      </ul>
+    </div>
+    <div class="pied-col">
+      <h2>Le projet</h2>
+      <ul>
+        <li><a href="#equipe" onclick="return allerSection('equipe')">Équipe GENESIS</a></li>
+        <li><span>Hackathon Create With AI 2026</span></li>
+        <li><button class="lien-pied" onclick="ouvrirConfidentialite()">Confidentialité</button></li>
+      </ul>
+    </div>
+  </div>
+  <p class="pied-bas">© 2026 LaboPoche, équipe GENESIS. Les simulations sont des modèles pédagogiques. Aucune donnée personnelle n'est collectée.</p>
 </footer>
 
-<dialog id="apropos" class="panneau" aria-labelledby="titreApropos">
+<dialog id="panneauConfidentialite" class="panneau" aria-labelledby="titreConfidentialite">
   <div class="panneau-tete">
-    <h2 id="titreApropos">À propos de LaboPoche</h2>
-    <button class="btn-info" onclick="document.getElementById('apropos').close()" aria-label="Fermer"><svg class="ico" aria-hidden="true"><use href="#i-fermer"/></svg></button>
+    <h2 id="titreConfidentialite" class="titre-ico"><svg class="ico" aria-hidden="true"><use href="#i-bouclier"/></svg> Confidentialité</h2>
+    <button class="btn-info" onclick="document.getElementById('panneauConfidentialite').close()" aria-label="Fermer"><svg class="ico" aria-hidden="true"><use href="#i-fermer"/></svg></button>
   </div>
-  <h3>Le problème</h3>
-  <p>Dans de nombreux lycées togolais, les laboratoires de sciences sont absents ou manquent de matériel. Beaucoup d'élèves apprennent les sciences sans pouvoir faire les expériences de leur programme.</p>
-  <h3>Notre solution</h3>
-  <p>LaboPoche transforme un simple téléphone en laboratoire : l'élève prédit, manipule une simulation et mesure, pendant qu'un professeur IA le guide sans lui donner la réponse. Trois expériences sont vérifiées par l'équipe ; pour tout autre sujet, l'IA crée une simulation sur mesure, à vérifier avec son professeur.</p>
-  <h3>Sources</h3>
-  <ul class="sources">
-    <li><a href="https://www.ajol.info/index.php/echanges/article/view/255476/241384" target="_blank" rel="noopener">Université de Lomé, revue Échanges (2023)</a></li>
-    <li><a href="https://www.undp.org/fr/node/381456" target="_blank" rel="noopener">PNUD Togo (2023)</a></li>
-    <li><a href="https://apprendre.auf.org/wp-content/uploads/2025/10/13-DID_Sciences_college.pdf" target="_blank" rel="noopener">Journées nationales de l'innovation pédagogique</a></li>
-    <li><a href="https://www.unicef.org/togo/recits/le-r%C3%AAve-de-modoukp%C3%A8-prend-son-envol" target="_blank" rel="noopener">UNICEF Togo : « Le rêve de Modoukpè prend son envol »</a></li>
+  <ul class="liste-confidentialite">
+    <li>Aucun compte : tu utilises LaboPoche sans inscription.</li>
+    <li>Aucune donnée personnelle n'est demandée ni collectée.</li>
+    <li>Tes demandes (texte, voix transcrite, photo) sont envoyées à Google Gemini, uniquement pour générer les réponses.</li>
+    <li>LaboPoche ne stocke aucune donnée sur ses serveurs. Ton téléphone garde seulement tes préférences et tes dernières simulations, pour aller plus vite.</li>
   </ul>
-  <h3>L'équipe GENESIS</h3>
-  <p>MUHAMMAD Hassan Idriss, MOUSSA SOUMAINE BACHAR, LEMOU Essowaba Dieu Donné</p>
-  <h3>Outils</h3>
-  <p>Projet réalisé pour le Hackathon Create With AI, Lomé 2026. Propulsé par Google Gemini, développé avec l'aide de Claude.</p>
-  <h3>Confidentialité</h3>
-  <p>Aucune inscription, aucune donnée personnelle collectée. Les simulations sont des modèles pédagogiques simplifiés.</p>
 </dialog>
 
 <div id="visite" class="visite cache" role="dialog" aria-labelledby="visiteTitre">
@@ -816,7 +1028,7 @@ function afficherAccueil() {
   arreterAnimation(); arreterVoix(); finirVisite();
   if (document.body.classList.contains('mode-classe')) basculerModeClasse();
   montrerEcran('ecranAccueil');
-  document.title = 'LaboPoche | Toute expérience, dans ta poche.';
+  document.title = 'LaboPoche : Toute expérience, dans ta poche.';
   window.scrollTo(0, 0);
 }
 
@@ -1472,6 +1684,7 @@ function afficherEtapeVisite() {
     choisirOnglet(onglet);
   }
   if (cible) {
+    const section = cible.closest('.revele'); if (section) section.classList.add('visible');
     cible.classList.add('visite-cible');
     cible.scrollIntoView({ behavior: mouvementReduit() ? 'auto' : 'smooth', block: 'start' });
   }
@@ -1617,10 +1830,7 @@ function toast(texte) {
   setTimeout(() => t.remove(), 2600);
 }
 
-function ouvrirApropos() {
-  const d = $('apropos');
-  if (d.showModal) d.showModal(); else d.setAttribute('open', '');
-}
+function ouvrirApropos() { allerSection('apropos'); }
 
 // Vérifie et nettoie la réponse de l'IA avant de l'utiliser
 function validerDefinition(j) {
@@ -1789,7 +1999,54 @@ window.addEventListener('message', ev => {
 });
 
 /* =========================================================
-   11. DÉMARRAGE
+   11. INTERFACE : navigation, menu, apparitions (purement visuel)
+   ========================================================= */
+// Défilement doux vers une section de l'accueil (sans changer l'adresse)
+function allerSection(id) {
+  basculerMenu(false);
+  const aller = () => { const el = $(id); if (el) el.scrollIntoView({ behavior: mouvementReduit() ? 'auto' : 'smooth', block: 'start' }); };
+  if (document.body.dataset.ecran !== 'ecranAccueil') { allerAccueil(); setTimeout(aller, 350); } else aller();
+  return false;
+}
+function basculerMenu(ouvrir) {
+  const menu = $('menuMobile'), b = $('btnMenu');
+  const etat = typeof ouvrir === 'boolean' ? ouvrir : menu.hidden;
+  menu.hidden = !etat;
+  b.setAttribute('aria-expanded', String(etat));
+  b.setAttribute('aria-label', etat ? 'Fermer le menu' : 'Ouvrir le menu');
+  b.innerHTML = ico(etat ? 'fermer' : 'menu');
+}
+// « Commencer » : place le curseur dans la barre de recherche
+function commencer() {
+  const viser = () => { window.scrollTo({ top: 0, behavior: mouvementReduit() ? 'auto' : 'smooth' }); setTimeout(() => $('texteAccueil').focus({ preventScroll: true }), 250); };
+  if (document.body.dataset.ecran !== 'ecranAccueil') { allerAccueil(); setTimeout(viser, 350); } else viser();
+}
+// Pastilles « Essaie : » : remplit la barre puis lance la demande
+function essayer(texte, lancer) { $('texteAccueil').value = texte; lancer(); }
+function decouvrirModeClasse() { ouvrirLabo('ohm'); basculerModeClasse(); }
+function ouvrirConfidentialite() {
+  const d = $('panneauConfidentialite');
+  if (d.showModal) d.showModal(); else d.setAttribute('open', '');
+}
+// Ombre de la barre seulement après défilement
+const majOmbreEntete = () => $('entete').classList.toggle('defile', window.scrollY > 4);
+window.addEventListener('scroll', majOmbreEntete, { passive: true });
+majOmbreEntete();
+// Titre de l'expérience recopié dans la barre de navigation
+new MutationObserver(() => { $('navTitre').textContent = $('titreTP').textContent; }).observe($('titreTP'), { childList: true, characterData: true, subtree: true });
+// Apparition douce des sections, une seule fois
+(function () {
+  const elements = document.querySelectorAll('.revele');
+  if (!('IntersectionObserver' in window) || mouvementReduit()) { elements.forEach(e => e.classList.add('visible')); return; }
+  const io = new IntersectionObserver(entrees => entrees.forEach(en => {
+    if (en.isIntersecting) { en.target.classList.add('visible'); io.unobserve(en.target); }
+  }), { threshold: 0.12 });
+  elements.forEach(e => io.observe(e));
+})();
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('menuMobile').hidden) basculerMenu(false); });
+
+/* =========================================================
+   12. DÉMARRAGE
    ========================================================= */
 voixActive = lireLS('labopoche_voix') !== 'non';
 if (syntheseOk) {
