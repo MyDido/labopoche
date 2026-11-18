@@ -494,7 +494,8 @@
   .bloc-enseignants h2 { margin-bottom: 12px; }
   .bloc-enseignants .section-intro { margin: 0 0 24px; color: #3F4656; font-size: 17px; }
   @media (max-width: 640px) { .bloc-enseignants { flex-direction: column; padding: 24px; } }
-  .apropos-grille { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+  .apropos-grille { display: grid; gap: 16px; grid-template-columns: 1fr; }
+  @media (min-width: 760px) { .apropos-grille { grid-template-columns: repeat(2, 1fr); } }
   .apropos-grille .carte { padding: 24px; }
   .apropos-grille h3 { font-size: 17px; color: var(--vert-fonce); margin-bottom: 8px; }
   .apropos-grille p { margin: 0; color: #3F4656; }
